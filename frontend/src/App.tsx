@@ -2,7 +2,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import AppLayout from "./layout/AppLayout";
 import Home from "./pages/Home.tsx";
 import Receptionist from "./pages/Receptionist.tsx";
-import Paramedics from "./pages/Paramedics.tsx";
+import Paramedics from "./pages/Paramedic.tsx";
 import Doctor from "./pages/Doctor";
 import Auth from "./pages/Auth";
 
@@ -21,7 +21,7 @@ const App = () => {
       element: <AppLayout />,
       children: [
         { path: "receptionist", element: <Receptionist /> },
-        { path: "paramedics", element: <Paramedics /> },
+        { path: "paramedic", element: <Paramedics /> },
         {
           path: "doctor",
           element: <Doctor />,
@@ -29,6 +29,7 @@ const App = () => {
       ],
     },
   ]);
+
   return <RouterProvider router={router} />;
 };
 

@@ -1,6 +1,6 @@
 function Auth() {
   return (
-    <div className="flex items-center justify-center text-4xl">
+    <div className="">
       <h1>Authentication Page</h1>
     </div>
   );
