@@ -43,7 +43,7 @@ export default function Sidebar() {
         <div className="size-12 rounded-full overflow-hidden">
           <img src="/tiet_logo.jpg" className="w-full h-full object-cover" />
         </div>
-        <h1>Thapar MediHub</h1>
+        <h1>TIET MediHub</h1>
       </div>
 
       <div className="px-4">
