@@ -9,15 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ChevronDown } from "lucide-react";
 
-export default function Receptionist() {
-  return (
-    <div>
-      <OPD />
-    </div>
-  );
-}
-
-export function OPD() {
+function Opd() {
   return (
     <div className="p-6 bg-zinc-100">
       <h1 className="text-4xl font-semibold mb-6">OPD</h1>
@@ -138,3 +130,5 @@ export function OPD() {
     </div>
   );
 }
+
+export default Opd;
