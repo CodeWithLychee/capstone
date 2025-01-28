@@ -1,10 +1,10 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import AppLayout from "./layout/AppLayout";
-import Home from "./pages/Home.tsx";
-import Receptionist from "./pages/Receptionist.tsx";
-import Paramedics from "./pages/Paramedic.tsx";
-import Doctor from "./pages/Doctor";
-import Auth from "./pages/Auth";
+import Home from "./pages/common/Home";
+import Auth from "./pages/common/Auth";
+import Receptionist from "./pages/receptionist/Receptionist";
+import Paramedic from "./pages/paramedics/Paramedic";
+import Doctor from "./pages/doctor/Doctor";
 
 const App = () => {
   const router = createBrowserRouter([
@@ -21,7 +21,7 @@ const App = () => {
       element: <AppLayout />,
       children: [
         { path: "receptionist", element: <Receptionist /> },
-        { path: "paramedic", element: <Paramedics /> },
+        { path: "paramedic", element: <Paramedic /> },
         {
           path: "doctor",
           element: <Doctor />,
