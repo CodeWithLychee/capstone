@@ -1,7 +1,9 @@
+import { Prescribe } from "./Prescribe";
+
 function Doctor() {
   return (
-    <div className="">
-      <h1>Doctor Page</h1>
+    <div>
+      <Prescribe />
     </div>
   );
 }

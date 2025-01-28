@@ -8,8 +8,34 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ChevronDown } from "lucide-react";
+import { useState } from "react";
 
 function Opd() {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const fields = [
+    { id: "bp", label: "Blood Pressure", placeholder: "Enter Blood Pressure" },
+    { id: "spo2", label: "SpO2", placeholder: "Enter SpO2" },
+    {
+      id: "temperature",
+      label: "Temperature",
+      placeholder: "Enter Temperature",
+    },
+    { id: "heartRate", label: "Heart Rate", placeholder: "Enter Heart Rate" },
+    { id: "bmi", label: "BMI", placeholder: "Enter BMI" },
+    { id: "glucose", label: "Glucose", placeholder: "Enter Glucose" },
+    {
+      id: "respiratoryRate",
+      label: "Respiratory Rate",
+      placeholder: "Enter Respiratory Rate",
+    },
+    {
+      id: "pregnant",
+      label: "Pregnant",
+      placeholder: "Enter Pregnancy Status",
+    },
+  ];
+
   return (
     <div className="p-6 bg-zinc-100">
       <h1 className="text-4xl font-semibold mb-6">OPD</h1>
@@ -68,57 +94,27 @@ function Opd() {
           </div>
         </div>
 
-        <Collapsible className="w-full">
-          <CollapsibleTrigger className="flex w-full items-center justify-between rounded-lg border p-4 hover:bg-gray-50 transition-colors duration-200">
-            <span>Additional</span>
-            <ChevronDown className="h-4 w-4 transition-transform duration-200 [&[data-state=open]]:rotate-180" />
+        <Collapsible
+          open={isOpen}
+          onOpenChange={setIsOpen}
+          className="border rounded-lg"
+        >
+          <CollapsibleTrigger className="flex items-center justify-between w-full p-4 hover:bg-gray-50">
+            <h2 className="text-lg font-semibold">Additional</h2>
+            <ChevronDown
+              className={`h-5 w-5 transition-transform duration-200 ${
+                isOpen ? "transform rotate-180" : ""
+              }`}
+            />
           </CollapsibleTrigger>
-          <CollapsibleContent className="pt-4 data-[state=open]:animate-slideDown data-[state=closed]:animate-slideUp">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <Label htmlFor="bp">Blood Pressure</Label>
-                <Input id="bp" />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="spo2">SpO2</Label>
-                <Input id="spo2" />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="temperature">Temperature</Label>
-                <Input id="temperature" />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="heartRate">Heart Rate</Label>
-                <Input id="heartRate" />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="bmi">BMI</Label>
-                <Input id="bmi" />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="glucose">Glucose</Label>
-                <Input id="glucose" />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="respiratoryRate">Respiratory Rate</Label>
-                <Input id="respiratoryRate" />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="pregnant">Pregnant</Label>
-                <Input id="pregnant" />
-              </div>
-            </div>
-
-            <div className="flex items-center gap-2 mt-4">
-              <Checkbox id="emergency" />
-              <Label htmlFor="emergency">Emergency</Label>
+          <CollapsibleContent className="p-4 border-t">
+            <div className="grid grid-cols-2 gap-4">
+              {fields.map(({ id, label, placeholder }) => (
+                <div key={id} className="space-y-2">
+                  <Label htmlFor={id}>{label}</Label>
+                  <Input id={id} placeholder={placeholder} />
+                </div>
+              ))}
             </div>
           </CollapsibleContent>
         </Collapsible>
