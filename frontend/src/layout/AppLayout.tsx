@@ -8,7 +8,7 @@ function AppLayout() {
   return (
     <div className="flex">
       <Sidebar />
-      <div className="fixed right-0 top-0 w-[85%] overflow-auto">
+      <div className="fixed right-0 top-0 w-[85%]">
         <Topbar />
         <div className="overflow-y-auto h-[calc(100vh-4rem)]">
           <Outlet />
