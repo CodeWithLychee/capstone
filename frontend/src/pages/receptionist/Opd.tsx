@@ -1,5 +1,4 @@
 import Button from "@/components/Button";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   Collapsible,
   CollapsibleContent,
