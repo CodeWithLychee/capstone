@@ -75,40 +75,6 @@ export function Prescribe() {
       <h1 className="text-4xl font-semibold mb-6 pl-5">Patient Prescription</h1>
       <div className="space-y-6 bg-white p-8 rounded-2xl">
         <form className="space-y-6 max-w-7xl mx-auto ">
-          {/* Demographics */}
-          {/* <div className="space-y-4">
-            <h2 className="text-lg font-semibold">Patient Details</h2>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="name">Name</Label>
-                <Input id="name" placeholder="Enter patient name" />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="Enter email address"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="gender">Gender</Label>
-                <Input id="gender" placeholder="Select gender" />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="age">Age</Label>
-                <Input id="age" type="number" placeholder="Enter age" />
-              </div>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="notes">Paramedic Notes</Label>
-              <Textarea
-                id="notes"
-                placeholder="Enter paramedic notes"
-                className="h-24"
-              />
-            </div>
-          </div> */}
           <div className="space-y-4">
             <h2 className="text-lg font-semibold">Patient Details</h2>
             <div className="grid grid-cols-2 gap-4 bg-gray-50 p-4 rounded-lg">
