@@ -2,7 +2,7 @@ import { ChevronDown } from "lucide-react";
 
 export default function Topbar() {
   return (
-    <header className="flex h-16 items-center justify-end px-6 border-b">
+    <header className="flex h-16 items-center justify-end px-6 border-b bg-[#EDEDED]">
       <button className="flex items-center gap-2 hover:bg-gray-100 px-4 py-1 rounded-lg transition-colors duration-200">
         <div className="size-12 rounded-full overflow-hidden border border-black">
           <img
