@@ -6,7 +6,7 @@ import Receptionist from "./pages/receptionist/Receptionist";
 import Paramedic from "./pages/paramedics/Paramedic";
 import Doctor from "./pages/doctor/Doctor";
 import {InventoryForm} from "./pages/paramedics/Inventory.tsx";
-
+import  Admin  from "./pages/admin/Admin.tsx";
 const App = () => {
   const router = createBrowserRouter([
     {
@@ -33,6 +33,10 @@ const App = () => {
         {
           path: "doctor",
           element: <Doctor />,
+        },
+        {
+          path: "admin",
+          element: <Admin />,
         },
       ],
     },
