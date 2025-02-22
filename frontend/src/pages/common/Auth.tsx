@@ -3,27 +3,46 @@
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import Button from "@/components/Button";
-import { NavLink } from "react-router-dom";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { useContext } from "react";
+import { userContext } from "@/store/userContext";
+import { ToastContainer,toast } from "react-toastify";
 
 interface SignupFormData {
-  firstName: string;
-  lastName: string;
-  email: string;
+  name: string;
   password: string;
 }
 
 export function Auth() {
   const [formData, setFormData] = useState<SignupFormData>({
-    firstName: "",
-    lastName: "",
-    email: "",
+    name: "",
     password: "",
   });
+  const {dispatch}=useContext(userContext);
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Form submitted:", formData);
-    // Add your signup logic here
+    try {
+      const response = await axios.post("/api/user/login", formData);
+      //console.log("Success:", response.data);
+      dispatch(response.data);
+      navigate("/app");
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        const { response } = error;
+        if (response) {
+          const { status, data } = response;
+          console.log("Error Status:", status); 
+          toast.error(data.message); 
+        } else {
+          console.log("No response from server", error.message);
+        }
+      } else {
+        console.log("Non-Axios error:", error);
+      }
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -36,6 +55,7 @@ export function Auth() {
 
   return (
     <div className="h-screen w-full">
+      <ToastContainer />
       <div
         className="h-full w-full fixed flex items-center justify-center p-4 blur-sm z-[10]"
         style={{
@@ -67,9 +87,9 @@ export function Auth() {
             <div>
               <Input
                 type="text"
-                name="firstName"
+                name="name"
                 placeholder="Username"
-                value={formData.firstName}
+                value={formData.name}
                 onChange={handleChange}
                 className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-red-500 focus:border-transparent"
                 required
@@ -78,20 +98,16 @@ export function Auth() {
             <div>
               <Input
                 type="password"
-                name="lastName"
+                name="password"
                 placeholder="Password"
-                value={formData.lastName}
+                value={formData.password}
                 onChange={handleChange}
                 className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-red-500 focus:border-transparent"
                 required
               />
             </div>
           </div>
-
-          
-          <NavLink to="/app/doctor">
-          <Button>Create Account</Button>
-          </NavLink>
+          <Button>Login</Button>
         </form>
       </div>
     </div>

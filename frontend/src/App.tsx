@@ -2,11 +2,11 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import AppLayout from "./layout/AppLayout";
 import Home from "./pages/common/Home";
 import {Auth} from "./pages/common/Auth";
-import Receptionist from "./pages/receptionist/Receptionist";
-import Paramedic from "./pages/paramedics/Paramedic";
-import Doctor from "./pages/doctor/Doctor";
+import OpdLog from "./pages/paramedics/opdLog.tsx";
+import Prescribe from "./pages/doctor/Prescribe";
 import {InventoryForm} from "./pages/paramedics/Inventory.tsx";
 import  Admin  from "./pages/admin/Admin.tsx";
+import Opd from "./pages/receptionist/Opd.tsx";
 const App = () => {
   const router = createBrowserRouter([
     {
@@ -21,18 +21,18 @@ const App = () => {
       path: "/app",
       element: <AppLayout />,
       children: [
-        { path: "receptionist", element: <Receptionist /> },
+        { path: "opd", element: <Opd/> },
         {
-          path: "queue",
-          element: <Paramedic/>,
+          path: "opdLog",
+          element: <OpdLog/>,
         },
         {
           path: "inventory",
           element: <InventoryForm />,
         },
         {
-          path: "doctor",
-          element: <Doctor />,
+          path: "prescribe",
+          element: <Prescribe />,
         },
         {
           path: "admin",
