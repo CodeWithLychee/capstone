@@ -28,6 +28,8 @@ export const login = async (req: Request, res: Response) => {
     .status(200)
     .cookie("token", createToken({ ...user1, password: "" }), {
       httpOnly: true,
+      secure:true,
+      sameSite:"none",
       expires: new Date(Date.now() + 1000 * 60 * 60),
     })
     .send(user1);
