@@ -1,9 +1,10 @@
 import { model, Schema } from "mongoose";
 import mongoose from "mongoose";
+import dotenv from "dotenv";
+dotenv.config({ path: "./.env" });
 
-mongoose.connect("mongodb://localhost:27017/capstone");
-
-//mongoose.connect(process.env.MONGODB_URI as string);
+//mongoose.connect("mongodb://localhost:27017/capstone");
+mongoose.connect(process.env.MONGODB_URI as string);
 
 
 const schema= new Schema({
