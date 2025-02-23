@@ -11,6 +11,6 @@ const router = Router();
 router.route("/login").post(login);
 router.route("/register").post(register);
 router.route("/logout").get(logout);
-router.route("/checkLogin").get(checkLogin);
+router.route("/checkLogin").post(checkLogin);
  
 export default router;

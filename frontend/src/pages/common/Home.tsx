@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { NavLink } from "react-router-dom";
 
 export default function Home() {
   return (
@@ -15,9 +16,10 @@ export default function Home() {
             </div>
             <h1>TIET MediHub</h1>
           </div>
-          <button className="border border-black px-4 py-2 rounded-full">
+          <NavLink to="/auth"><button className="border border-black px-4 py-2 rounded-full">
             Get Started
-          </button>
+          </button></NavLink>
+          
         </nav>
 
         {/* <p>

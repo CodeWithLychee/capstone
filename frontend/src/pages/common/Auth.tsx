@@ -8,11 +8,13 @@ import { useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import { userContext } from "@/store/userContext";
 import { ToastContainer,toast } from "react-toastify";
+import {api} from "../../lib/utils";
 
 interface SignupFormData {
   name: string;
   password: string;
 }
+
 
 export function Auth() {
   const [formData, setFormData] = useState<SignupFormData>({
@@ -25,7 +27,7 @@ export function Auth() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await axios.post("/api/user/login", formData);
+      const response = await api.post(`/user/login`, formData);
       //console.log("Success:", response.data);
       dispatch(response.data);
       navigate("/app");

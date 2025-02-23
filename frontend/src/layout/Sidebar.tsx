@@ -15,8 +15,7 @@ import { useContext } from "react";
 import { userContext } from "@/store/userContext";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
-
+import { api } from "../lib/utils";
 
 const links = [
   {
@@ -122,7 +121,7 @@ export default function Sidebar() {
   const links1=links.find((link)=>link.role===user.role)?.links;
   const navigate=useNavigate();
   async function logout(){
-    const response=await axios.get("/api/user/logout");
+    const response=await api.get(`/user/logout`);
     console.log(response.status);
     navigate("/auth");
   }
