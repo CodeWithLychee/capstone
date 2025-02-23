@@ -7,12 +7,10 @@ import { userInterface } from "../types/user";
 
 export const login = async (req: Request, res: Response) => {
   const { name, password } = req.body;
-  console.log(name, password);
   if(!name || !password){
     res.status(400).json({ message: "Field is missing" });
     return;
   }
-  console.log(await user.find());
   const data: userInterface[] = await user.find({ name: name });
   const user1 = data[0];
   const secret: any = process.env.secret;
@@ -67,6 +65,7 @@ export const checkLogin = async (req: Request, res: Response) => {
         ? JSON.parse(req.headers["authorization"])["value"]
         : null);
     const secret: any = process.env.secret;
+    console.log(token);
     try {
       if (!token) {
         res.status(401).json({ message: "No token" });

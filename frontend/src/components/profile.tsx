@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { userContext } from "../store/userContext";
+import { api } from "../lib/utils";
 
 export default function Profile({ children }: { children: React.ReactNode }) {
   const [user, dispatch] = useState<{
@@ -29,7 +29,9 @@ export default function Profile({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const fetchUser = async () => {
-      const response = await axios.get(`/api/user/checkLogin`);
+      const response = await api.post(`/user/checkLogin`,{
+        withCredentials: true, 
+      });
       const data= response.data;
       console.log(data);
       dispatch(data);

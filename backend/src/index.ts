@@ -12,7 +12,7 @@ const port = process.env.PORT || 8000;
 
 app.use(
   cors({
-    origin: ["http://localhost:5173","https://hoppscotch.io"],
+    origin: ["http://localhost:5173","https://hoppscotch.io","https://capstone1-sigma.vercel.app"],
     methods: ["GET", "POST","DELETE","PUT"],
     credentials: true,
     allowedHeaders: ["Content-Type", "Authorization"],
