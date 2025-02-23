@@ -1,6 +1,10 @@
 {
   "rewrites": [
     {
+      "source": "/api/(.*)",
+      "destination": "https://capstone1-7iw4.onrender.com"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }
