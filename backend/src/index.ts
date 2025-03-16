@@ -3,29 +3,34 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import user from "./routes/user.js";
 
-const app=express();
+import dotenv from "dotenv";
+dotenv.config();
+
+console.log("op");
+console.log(process.env.MONGODB_URI);
+const app = express();
+app.use(express.json());
 app.use(cookieParser());
 
-app.use(express.json());
-
-const port = process.env.PORT || 8000;
-
+// CORS Configuration
 app.use(
   cors({
-    origin: ["http://localhost:5173","https://hoppscotch.io","https://capstone1-sigma.vercel.app"],
-    methods: ["GET", "POST","DELETE","PUT"],
+    origin: [
+      "http://localhost:5173",
+      "https://hoppscotch.io",
+      "https://capstone1-sigma.vercel.app",
+    ],
+    methods: ["GET", "POST", "DELETE", "PUT"],
     credentials: true,
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 
+// Routes
 app.use("/user", user);
 
-
-app.get("/", function (_req,res) {
+app.get("/", function (_req, res) {
   res.send({ message: "Hello World" });
 });
 
-app.listen(port, () => {
-  console.log("port running on port ", port);
-});
+export { app };
