@@ -161,7 +161,7 @@ export function Auth() {
           toast.error("Passwords do not match");
           return;
         }
-        const response = await api.post(`/user/register`, formData); // ✅ Corrected route
+        await api.post(`/user/register`, formData); // ✅ Corrected route
         toast.success("Signup successful! Please log in.");
         setIsSignup(false); // Switch to login after signup
       } else {
