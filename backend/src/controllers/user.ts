@@ -5,6 +5,7 @@ import user from "../models/user.js";
 import { createToken } from "../utils/jwt.js";
 import { userInterface } from "../types/user";
 
+
 export const login = async (req: Request, res: Response) => {
   const { name, password } = req.body;
   if (!name || !password) {
@@ -29,7 +30,7 @@ export const login = async (req: Request, res: Response) => {
   res
     .status(200)
     .cookie("token", createToken({ ...user1, password: "" }), {
-      httpOnly: true,
+      httpOnly: false,
       secure: true,
       sameSite: "none",
       expires: new Date(Date.now() + 1000 * 60 * 60),
@@ -101,7 +102,7 @@ export const checkLogin = async (req: Request, res: Response) => {
       ? JSON.parse(req.headers["authorization"])["value"]
       : null);
   const secret: any = process.env.secret;
-  console.log(token);
+  //console.log(token);
   try {
     if (!token) {
       res.status(401).json({ message: "No token" });
