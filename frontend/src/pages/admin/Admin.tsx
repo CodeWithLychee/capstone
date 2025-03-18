@@ -3,9 +3,11 @@ import { StatsCard } from "@/components/dashboard/Stats-card"
 import { VisitsChart } from "@/components/dashboard/charts/Visits-chart"
 import { StaffChart } from "@/components/dashboard/charts/Staff-chart"
 import { VisitorsPieChart } from "@/components/dashboard/charts/Visits-pie"
+import Access from "../common/access";
 
 export default function Dashboard() {
   return (
+  <Access text={["admin"]}>
     <div className="flex-1 space-y-6 p-8 pt-6">
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <StatsCard title="Total Patients" value="12" icon={<Users className="h-5 w-5" />} />
@@ -27,5 +29,6 @@ export default function Dashboard() {
         </div>
       </div>
     </div>
+  </Access>
   )
 }

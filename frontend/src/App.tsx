@@ -7,8 +7,11 @@ import Prescribe from "./pages/doctor/Prescribe";
 import {InventoryForm} from "./pages/paramedics/Inventory.tsx";
 import  Admin  from "./pages/admin/Admin.tsx";
 import Opd from "./pages/receptionist/Opd.tsx";
+import Dashboard from "./pages/common/Dashboard.tsx";
+
 const App = () => {
   const router = createBrowserRouter([
+    
     {
       path: "/",
       element: <Home />,
@@ -21,7 +24,14 @@ const App = () => {
       path: "/app",
       element: <AppLayout />,
       children: [
-        { path: "opd", element: <Opd/> },
+        { 
+          path: "dashboard", 
+          element: <Dashboard/> 
+        },
+        { 
+          path: "opd", 
+          element: <Opd/> 
+        },
         {
           path: "opdLog",
           element: <OpdLog/>,

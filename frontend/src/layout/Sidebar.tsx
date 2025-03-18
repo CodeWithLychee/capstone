@@ -23,7 +23,7 @@ const links = [
     links: [
       {
         name: "Dashboard",
-        href:"/app",
+        href:"/app/dashboard",
         logo: <LayoutDashboard className="mr-3 h-5 w-5" />,
       },
       {
@@ -58,7 +58,7 @@ const links = [
     links: [
       {
         name: "Dashboard",
-        href:"/app",
+        href:"/app/dashboard",
         logo: <LayoutDashboard className="mr-3 h-5 w-5" />,
       },
       {
@@ -93,7 +93,7 @@ const links = [
     links:[
       {
         name: "Dashboard",
-        href:"/app",
+        href:"/app/dashboard",
         logo: <LayoutDashboard className="mr-3 h-5 w-5" />,
       },
       {
