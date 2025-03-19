@@ -1,8 +1,8 @@
 import type React from "react";
 import { useState, useContext } from "react";
 import { Button } from "@/components/myprofilecomponents/ui/button";
-import { Input } from "@/components/myprofilecomponents/ui/input";
-import { Label } from "@/components/myprofilecomponents/ui/label";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/myprofilecomponents/ui/avatar";
 import { User } from "lucide-react";
 import { userContext } from "@/store/userContext";
