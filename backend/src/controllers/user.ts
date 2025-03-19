@@ -4,6 +4,9 @@ import jwt from "jsonwebtoken";
 import user from "../models/user.js";
 import { createToken } from "../utils/jwt.js";
 import { userInterface } from "../types/user";
+import patient from "../models/patient.js";
+import Queue from "../models/patientQueue.js";
+import Prescription from "../models/prescription.js";
 
 export const login = async (req: Request, res: Response) => {
   const { name, password } = req.body;
@@ -114,4 +117,111 @@ export const checkLogin = async (req: Request, res: Response) => {
   } catch (e) {
     res.status(401).json({ message: "Invalid token" });
   }
+};
+
+export const addOpd = async (req: Request, res: Response) => {
+  const {
+    user_id,
+    gender,
+    name,
+    roll_no,
+    staffId,
+    email,
+    mobile_no,
+    age,
+    department,
+    room_no,
+    hostel,
+    year,
+    temperature,
+    bp,
+    spo2,
+    heart_rate,
+    bmi,
+    glucose,
+    respiratory_rate,
+    pregnant,
+  } = req.body;
+  //console.log(req.body);
+  const check = await user.find({ roll_no: roll_no});
+  let patient1;
+  if (check.length == 0) {
+    patient1 = new user({
+      name,
+      password:"null",
+      role: "worker",
+      roll_no,
+      staffId,
+      email,
+      mobile_no,
+      age,
+      department,
+      room_no,
+      gender: gender,
+      hostel,
+      year,
+      prescription: [],
+    });
+    await patient1.save();
+  }
+  const prescription1 = new Prescription({
+    patient_id: check.length == 0 ? patient1?._id : check[0]._id,
+    paramedic_notes: "",
+    vitals: {
+      temperature: temperature,
+      respiratory_rate: respiratory_rate,
+      bp: bp,
+      spo2: spo2,
+      heart_rate: heart_rate,
+      bmi: bmi,
+      glucose: glucose,
+      pregnant: pregnant === "true",
+    },
+    prescription: {
+      history: "",
+      co: "",
+      allergy: "",
+      diagnosis: "",
+      investigation: "",
+      prognosis: "",
+      advice: "",
+    },
+    medicine: [],
+    date: new Date(),
+  });
+  await prescription1.save();
+  //console.log(prescription1);
+  await user.updateOne(
+    { _id: check.length == 0 ? patient1?._id : check[0]._id },
+    { $push: { prescription: prescription1._id } }
+  );
+  //console.log(patient1);
+  const queue = new Queue({
+    patient_id: check.length == 0 ? patient1?._id : check[0]._id,
+    status: false,
+    prescription_id: prescription1._id,
+  });
+  await queue.save();
+  res.status(200).json({ message: "Patient added to Queue" });
+};
+
+export const getOpdLog= async (req: Request, res: Response) => {
+  const status=req.query.status;
+  const data = await Queue.find({ status: status}).populate("prescription_id").populate("patient_id");
+  //console.log(data);
+  res.status(200).json(data);
+}
+
+export const search = async (req: Request, res: Response) => {
+  const { roll_no,staffId,mobile_no } = req.body;
+  console.log(await user.find({mobile_no: ""}));
+  const data = await user.find({ 
+    $or: [
+      { roll_no: { $regex: roll_no ? roll_no : "-1" } }, 
+      { staffId: { $regex: staffId ? staffId : "-1" } }, 
+      { mobile_no: { $regex: mobile_no ? mobile_no : "-1" } }
+    ] 
+  });
+  console.log("hello",data);
+  res.status(200).json(data);
 };

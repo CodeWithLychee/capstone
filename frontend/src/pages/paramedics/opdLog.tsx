@@ -1,54 +1,59 @@
 import Button from "@/components/Button";
 import Access from "../common/access";
+import { useEffect, useState } from "react";
+import { api } from "../../lib/utils.ts";
+import { PatientQueue } from "@/lib/types.ts";
 
-interface Patient {
-  id: number;
-  name: string;
-  rollNumber: string;
-  age: number;
-  phoneNumber: string;
-  prescribedBy: string;
-}
-
-const patients: Patient[] = [
-  {
-    id: 1,
-    name: "Prerit Bhagat",
-    rollNumber: "102217030",
-    age: 20,
-    phoneNumber: "+91 81988944400",
-    prescribedBy: "",
-  },
-  {
-    id: 2,
-    name: "Rahul Kumar",
-    rollNumber: "102217031",
-    age: 20,
-    phoneNumber: "+91 81988944401",
-    prescribedBy: "",
-  },
-  {
-    id: 3,
-    name: "Rahul Kumar",
-    rollNumber: "102217032",
-    age: 20,
-    phoneNumber: "+91 81988944402",
-    prescribedBy: "",
-  },
-  {
-    id: 4,
-    name: "Rahul Kumar",
-    rollNumber: "102217033",
-    age: 20,
-    phoneNumber: "+91 81988944403",
-    prescribedBy: "",
-  },
-  // More patients can be added here
-];
+// const patients: Patient[] = [
+//   {
+//     id: 1,
+//     name: "Prerit Bhagat",
+//     rollNumber: "102217030",
+//     age: 20,
+//     phoneNumber: "+91 81988944400",
+//     prescribedBy: "",
+//   },
+//   {
+//     id: 2,
+//     name: "Rahul Kumar",
+//     rollNumber: "102217031",
+//     age: 20,
+//     phoneNumber: "+91 81988944401",
+//     prescribedBy: "",
+//   },
+//   {
+//     id: 3,
+//     name: "Rahul Kumar",
+//     rollNumber: "102217032",
+//     age: 20,
+//     phoneNumber: "+91 81988944402",
+//     prescribedBy: "",
+//   },
+//   {
+//     id: 4,
+//     name: "Rahul Kumar",
+//     rollNumber: "102217033",
+//     age: 20,
+//     phoneNumber: "+91 81988944403",
+//     prescribedBy: "",
+//   },
+//   // More patients can be added here
+// ];
 
 export default function OpdLog() {
+  const [patients, setPatients] = useState<PatientQueue[]>([]);
+  useEffect(() => {
+    const fetchPatients = async () => {
+      const response = await api.get("/user/getOpdLog/?status=false");
+      const data = await response.data;
+      console.log(data);
+      setPatients(data);
+    };
+    const interval = setInterval(fetchPatients, 2000);
+    return () => clearInterval(interval);
+  }, []);
   return (
-    <Access text={["doctor","receptionist","paramedic"]}>
+    <Access text={["doctor", "receptionist", "paramedic"]}>
       <div className="p-6 bg-zinc-100 h-full">
         <h1 className="text-4xl font-semibold mb-6 pl-5">
           Patient Prescription
@@ -82,25 +87,23 @@ export default function OpdLog() {
                 </tr>
               </thead>
               <tbody className="divide-y">
-                {patients.map((patient) => (
-                  <tr key={patient.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 text-sm text-gray-500">
-                      {patient.id}
+                {patients.map((patient, i) => (
+                  <tr key={patient._id} className="hover:bg-gray-50">
+                    <td className="px-6 py-4 text-sm text-gray-500">{i}</td>
+                    <td className="px-6 py-4 text-sm text-gray-900">
+                      {patient.patient_id.name}
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-900">
-                      {patient.name}
+                      {patient.patient_id.roll_no}
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-900">
-                      {patient.rollNumber}
+                      {patient.patient_id.age}
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-900">
-                      {patient.age}
+                      {patient.patient_id.mobile_no}
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-900">
-                      {patient.phoneNumber}
-                    </td>
-                    <td className="px-6 py-4 text-sm text-gray-900">
-                      {patient.prescribedBy}
+                      {patient.prescription_id.doctor_id}
                     </td>
                     <td className="px-6 py-4 text-sm">
                       <Button>View</Button>

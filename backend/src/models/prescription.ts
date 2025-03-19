@@ -2,20 +2,22 @@ import { Schema, model } from "mongoose";
 
 const schema = new Schema(
   {
-    user_id: { type: Schema.Types.ObjectId, ref: "User", required: false },
     patient_id: {
       type: Schema.Types.ObjectId,
-      ref: "Patient",
+      ref: "User",
       required: false,
     },
-    doctor_id: { type: Schema.Types.ObjectId, ref: "User", required: true },
+    doctor_id: { type: Schema.Types.ObjectId, ref: "User", required: false },
     paramedic_notes: { type: String },
     vitals: {
       temperature: { type: String },
       respiratory_rate: { type: String },
       bp: { type: String },
-      spo2: { type: Number, min: 0, max: 100 },
+      spo2: { type: String },
       heart_rate: { type: String },
+      bmi: { type: String },
+      glucose: { type: String },
+      pregnant: { type: Boolean },
     },
     prescription: {
       history: { type: String },
@@ -34,6 +36,9 @@ const schema = new Schema(
         instructions: { type: String, required: true },
       },
     ],
+    referred_outside: { type: Boolean, default: false },
+    rest_recommendation: { type: String },
+    follow_up_date: { type: Date },
     date: { type: Date, required: true, default: Date.now },
   },
   { timestamps: true }
