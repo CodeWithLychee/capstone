@@ -5,7 +5,6 @@ import user from "../models/user.js";
 import { createToken } from "../utils/jwt.js";
 import { userInterface } from "../types/user";
 
-
 export const login = async (req: Request, res: Response) => {
   const { name, password } = req.body;
   if (!name || !password) {
@@ -36,6 +35,8 @@ export const login = async (req: Request, res: Response) => {
       expires: new Date(Date.now() + 1000 * 60 * 60),
     })
     .send(user1);
+
+  console.log("login ho gya", user1.role);
 };
 
 export const logout = async (req: Request, res: Response) => {
