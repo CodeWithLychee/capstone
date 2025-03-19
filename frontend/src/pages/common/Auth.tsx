@@ -28,15 +28,21 @@ export function Auth() {
     try {
       const response = await api.post(`/user/login`, formData);
       console.log("Success:", response.data);
+
+      const { role } = response.data;
       dispatch(response.data);
-      navigate("/app");
+
+      if (role) {
+        navigate(`/app/${role}/dashboard`);
+      } else {
+        navigate("/");
+      }
     } catch (error) {
       if (axios.isAxiosError(error)) {
         const { response } = error;
         if (response) {
-          const { status, data } = response;
-          console.log("Error Status:", status);
-          toast.error(data.message);
+          console.log("Error Status:", response.status);
+          toast.error(response.data.message);
         } else {
           console.log("No response from server", error.message);
         }

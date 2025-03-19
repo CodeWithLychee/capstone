@@ -6,10 +6,9 @@ import {
   Coffee,
   GraduationCap,
   LogOut,
-
 } from "lucide-react";
 import { LuNotebookPen } from "react-icons/lu";
-import { MdOutlineInventory,MdEventAvailable } from "react-icons/md";
+import { MdOutlineInventory, MdEventAvailable } from "react-icons/md";
 
 import { useContext } from "react";
 import { userContext } from "@/store/userContext";
@@ -23,32 +22,32 @@ const links = [
     links: [
       {
         name: "Dashboard",
-        href:"/app/dashboard",
+        href: "/app/receptionist/dashboard",
         logo: <LayoutDashboard className="mr-3 h-5 w-5" />,
       },
       {
         name: "OPD",
-        href:"/app/opd",
+        href: "/app/receptionist/opd",
         logo: <Stethoscope className="mr-3 h-5 w-5" />,
       },
       {
         name: "OPD Log",
-        href:"/app/opdLog",
+        href: "/app/receptionist/opdLog",
         logo: <ClipboardList className="mr-3 h-5 w-5" />,
       },
       {
         name: "Medical Waste",
-        href:"/app",
+        href: "/app/receptionist/dashboard",
         logo: <Trash2 className="mr-3 h-5 w-5" />,
       },
       {
         name: "Rest",
-        href:"/app",
+        href: "/app/receptionist/dashboard",
         logo: <Coffee className="mr-3 h-5 w-5" />,
       },
       {
         name: "Training",
-        href:"/app",
+        href: "/app/receptionist/dashboard",
         logo: <GraduationCap className="mr-3 h-5 w-5" />,
       },
     ],
@@ -58,70 +57,69 @@ const links = [
     links: [
       {
         name: "Dashboard",
-        href:"/app/dashboard",
+        href: "/app/paramedic/dashboard",
         logo: <LayoutDashboard className="mr-3 h-5 w-5" />,
       },
       {
-        name:"Inventory",
-        href:"/app/inventory",
-        logo:<MdOutlineInventory className="mr-3 h-5 w-5" />
+        name: "Inventory",
+        href: "/app/paramedic/inventory",
+        logo: <MdOutlineInventory className="mr-3 h-5 w-5" />,
       },
       {
         name: "Patient Queue",
-        href:"/app/opdLog",
+        href: "/app/paramedic/opdLog",
         logo: <ClipboardList className="mr-3 h-5 w-5" />,
       },
       {
         name: "Available",
-        href:"/app",
+        href: "/app/paramedic/dashboard",
         logo: <MdEventAvailable className="mr-3 h-5 w-5" />,
       },
       {
         name: "Rest",
-        href:"/href",
+        href: "/app/paramedic/dashboard",
         logo: <Coffee className="mr-3 h-5 w-5" />,
       },
       {
         name: "Training",
-        href:"/app",
+        href: "/app/paramedic/dashboard",
         logo: <GraduationCap className="mr-3 h-5 w-5" />,
       },
     ],
   },
   {
     role: "doctor",
-    links:[
+    links: [
       {
         name: "Dashboard",
-        href:"/app/dashboard",
+        href: "/app/doctor/dashboard",
         logo: <LayoutDashboard className="mr-3 h-5 w-5" />,
       },
       {
-        name: "Prescribe",
-        href:"/app/prescribe",
-        logo: <LuNotebookPen className="mr-3 h-5 w-5" />,
-      },
-      {
-        name: "OPD Log",
-        href:"/app/opdLog",
+        name: "Patient Queue",
+        href: "/app/doctor/opdLog",
         logo: <ClipboardList className="mr-3 h-5 w-5" />,
       },
       {
+        name: "Prescribe",
+        href: "/app/doctor/prescribe",
+        logo: <LuNotebookPen className="mr-3 h-5 w-5" />,
+      },
+      {
         name: "Training",
-        href:"/app",
+        href: "/app/doctor/dashboard",
         logo: <GraduationCap className="mr-3 h-5 w-5" />,
       },
-
-    ]
-  }
+    ],
+  },
 ];
 
 export default function Sidebar() {
-  const {user}=useContext(userContext);
-  const links1=links.find((link)=>link.role===user.role)?.links;
-  const navigate=useNavigate();
-  async function logout(){
-    const response=await api.get(`/user/logout`);
+  const { user } = useContext(userContext);
+  const links1 = links.find((link) => link.role === user.role)?.links;
+  const navigate = useNavigate();
+  async function logout() {
+    const response = await api.get(`/user/logout`);
     console.log(response.status);
     navigate("/auth");
   }
@@ -138,7 +136,7 @@ export default function Sidebar() {
         <nav className="space-y-2">
           {links1?.map((link, i) => (
             <Link
-              to={link.href || "/href"}
+              to={link.href}
               key={i}
               className="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 rounded-lg group transition-colors duration-200"
             >
@@ -152,7 +150,10 @@ export default function Sidebar() {
       </div>
 
       <div className="absolute bottom-0 w-full p-4">
-        <button onClick={()=>logout()} className="flex w-full items-center px-4 py-3 text-gray-300 group hover:bg-gray-700 rounded-lg">
+        <button
+          onClick={() => logout()}
+          className="flex w-full items-center px-4 py-3 text-gray-300 group hover:bg-gray-700 rounded-lg"
+        >
           <LogOut className="mr-3 h-5 w-5" />
           <p className="group-hover:ml-1.5 transition-all duration-300">
             Logout
