@@ -54,22 +54,25 @@ export const register = async (req: Request, res: Response) => {
       password,
       role,
       gender,
-      phno,
+      mobile_no, // Updated from phno
       dob,
       email,
       addr,
+      department,
+      room_no,
+      hostel,
+      year,
     } = req.body;
 
-    console.log("you are trying to register the new user ");
-    // Check if user already exists
+    console.log("Attempting to register a new user...");
+
+    // Check if user already exists (by email or mobile_no)
     const existingUser = await user.findOne({
-      $or: [{ email }, { phno }],
-      //, { staffId }, { roll_no }]
+      $or: [{ email }, { mobile_no }],
     });
 
     if (existingUser) {
-      console.log("mai hu bhai ");
-      console.log(existingUser);
+      console.log("User already exists:", existingUser);
       return res.status(400).json({ message: "User already exists" });
     }
 
@@ -79,18 +82,24 @@ export const register = async (req: Request, res: Response) => {
     // Create a new user
     const newUser = new user({
       name,
-      staffId,
-      roll_no,
+      staffId: role === "staff" ? staffId : undefined, // Only for staff
+      roll_no: role === "student" ? roll_no : undefined, // Only for students
       password: hashedPassword,
       role,
       gender,
-      phno,
+      mobile_no,
       dob,
       email,
       addr,
+      department: role === "staff" ? department : undefined,
+      room_no: role === "student" ? room_no : undefined,
+      hostel: role === "student" ? hostel : undefined,
+      year: role === "student" ? year : undefined,
     });
 
     await newUser.save();
+    console.log("User registered successfully:", newUser);
+
     res.status(201).json({ message: "User registered successfully" });
   } catch (error) {
     console.error("Error in register:", error);
@@ -142,12 +151,12 @@ export const addOpd = async (req: Request, res: Response) => {
     pregnant,
   } = req.body;
   //console.log(req.body);
-  const check = await user.find({ roll_no: roll_no});
+  const check = await user.find({ roll_no: roll_no });
   let patient1;
   if (check.length == 0) {
     patient1 = new user({
       name,
-      password:"null",
+      password: "null",
       role: "worker",
       roll_no,
       staffId,
@@ -204,23 +213,25 @@ export const addOpd = async (req: Request, res: Response) => {
   res.status(200).json({ message: "Patient added to Queue" });
 };
 
-export const getOpdLog= async (req: Request, res: Response) => {
-  const status=req.query.status;
-  const data = await Queue.find({ status: status}).populate("prescription_id").populate("patient_id");
+export const getOpdLog = async (req: Request, res: Response) => {
+  const status = req.query.status;
+  const data = await Queue.find({ status: status })
+    .populate("prescription_id")
+    .populate("patient_id");
   //console.log(data);
   res.status(200).json(data);
-}
+};
 
 export const search = async (req: Request, res: Response) => {
-  const { roll_no,staffId,mobile_no } = req.body;
-  console.log(await user.find({mobile_no: ""}));
-  const data = await user.find({ 
+  const { roll_no, staffId, mobile_no } = req.body;
+  console.log(await user.find({ mobile_no: "" }));
+  const data = await user.find({
     $or: [
-      { roll_no: { $regex: roll_no ? roll_no : "-1" } }, 
-      { staffId: { $regex: staffId ? staffId : "-1" } }, 
-      { mobile_no: { $regex: mobile_no ? mobile_no : "-1" } }
-    ] 
+      { roll_no: { $regex: roll_no ? roll_no : "-1" } },
+      { staffId: { $regex: staffId ? staffId : "-1" } },
+      { mobile_no: { $regex: mobile_no ? mobile_no : "-1" } },
+    ],
   });
-  console.log("hello",data);
+  console.log("hello", data);
   res.status(200).json(data);
 };

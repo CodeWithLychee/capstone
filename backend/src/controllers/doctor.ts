@@ -26,10 +26,10 @@ export const getPatientQueue = async (req: Request, res: Response) => {
 };
 
 export const createPrescription = async (_req: Request, res: Response) => {
-  //Step 1 : Save Data in Prescription Model
   try {
+    // Step 1: Extract data from request body
     const {
-      user_id,
+      patient_id,
       doctor_id,
       paramedic_notes = "",
       vitals = {},
@@ -40,15 +40,11 @@ export const createPrescription = async (_req: Request, res: Response) => {
       follow_up_date,
     } = _req.body;
 
-    if (!user_id || !doctor_id) {
-      return res.status(400).json({
-        success: false,
-        message: "Missing required fields: user_id or doctor_id",
-      });
-    }
+    console.log("Controller reached: Creating prescription");
 
+    // Step 2: Create a new prescription object
     const newPrescription = new prescription({
-      patient_id: user_id,
+      patient_id,
       doctor_id,
       paramedic_notes,
       vitals: {
@@ -70,8 +66,8 @@ export const createPrescription = async (_req: Request, res: Response) => {
         prognosis: patient_prescription?.prognosis || "",
         advice: patient_prescription?.advice || "",
       },
-      medicine: medicine?.map((med: any) => ({
-        m_id: med?.m_id || "",
+      medicine: medicine.map((med: any) => ({
+        m_id: med?.m_id || null,
         quantity: med?.quantity || "",
         frequency: med?.frequency || "",
         duration: med?.duration || "",
@@ -82,32 +78,51 @@ export const createPrescription = async (_req: Request, res: Response) => {
       follow_up_date,
     });
 
+    // Save the new prescription to the database
     const savedPrescription = await newPrescription.save();
 
-    //Step 2 : Update the patientQueue model to set status = true
+    // Step 3: Update the PatientQueue model to set status = true
+
     const updatedQueue = await patientQueue.findOneAndUpdate(
-      { patient_id: user_id, status: false },
+      { patient_id, status: false },
       { status: true },
       { new: true }
     );
 
-    //Step 3 :Update the user model by adding the prescription ID to prescriptions array
+    if (!updatedQueue) {
+      return res.status(404).json({
+        success: false,
+        message: "Patient queue not found or already updated",
+      });
+    }
+
+    // Step 4: Update the User model by adding the prescription ID to prescriptions array
     const updatedUser = await user.findByIdAndUpdate(
-      user_id,
-      { $push: { prescriptions: savedPrescription._id } },
+      patient_id, // Use the patient's ID directly
+      { $push: { prescription: savedPrescription._id } }, // Push prescription ID to prescriptions array
       { new: true }
     );
 
+    if (!updatedUser) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    // Respond with success and data
     res.status(201).json({
       success: true,
-      message: "Prescription saved, patient queue updated, user updated",
+      message:
+        "Prescription saved successfully. Patient queue and user updated.",
       data: { prescription: savedPrescription, updatedQueue, updatedUser },
     });
   } catch (error: any) {
     console.error("Error saving prescription:", error);
     res.status(500).json({
       success: false,
-      message: "Server error, could not save prescription",
+      message:
+        "An error occurred while saving the prescription. Please try again.",
       error: error.message,
     });
   }
