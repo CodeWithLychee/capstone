@@ -2,6 +2,7 @@ import express from "express";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import user from "./routes/user.js";
+import doctorRoutes from "./routes/doctor.js";
 
 import dotenv from "dotenv";
 dotenv.config();
@@ -30,6 +31,7 @@ app.use(
 
 // Routes
 app.use("/user", user);
+app.use("/doctor", doctorRoutes);
 
 app.get("/", function (_req, res) {
   res.send({ message: "Hello World" });

@@ -2,7 +2,7 @@ import { app } from "./index.js";
 import { ConnectDB } from "./db/db.js";
 
 console.log("hiii");
-const port = process.env.PORT || 8000;
+const port = process.env.PORT || 4000;
 
 ConnectDB()
   .then(() => {
