@@ -1,30 +1,41 @@
+import { prescriptionInterface } from "@/lib/types";
 import React, { createContext} from "react";
 
 export const userContext = createContext<{
   user: {
     _id: string;
     name: string;
-    email: string;
+    email?: string;
     gender: string;
-    role: string;
-    phno: number;
-    dob: Date;
-    addr: string;
-    staff_id: string;
-    roll_no: string;
+    role?: string;
+    mobile_no: string;
+    dob?: Date;
+    addr?: string;
+    staffId?: string;
+    roll_no?: string;
+    hostel?: string;
+    year?: string
+    room_no?: string;
+    department?: string;
+    prescription:prescriptionInterface[] | [];
   };
   dispatch: React.Dispatch<
     React.SetStateAction<{
       _id: string;
     name: string;
-    email: string;
+    email?: string;
     gender: string;
-    role: string;
-    phno: number;
-    dob: Date;
-    addr: string;
-    staff_id: string;
-    roll_no: string;
+    role?: string;
+    mobile_no: string;
+    dob?: Date;
+    addr?: string;
+    staffId?: string;
+    roll_no?: string;
+    hostel?: string;
+    year?: string
+    room_no?: string;
+    department?: string;
+    prescription:prescriptionInterface[] | [];
     }>
   >;
 }>({
@@ -34,11 +45,16 @@ export const userContext = createContext<{
     email: "",
     gender: "",
     role: "",
-    phno: 0,
+    mobile_no: "",
     dob: new Date(),
     addr: "",
-    staff_id: "",
+    staffId: "",
     roll_no: "",
+    hostel: "",
+    year: "",
+    room_no: "",
+    department: "",
+    prescription:[],
   },
   dispatch: () => {},
 });
