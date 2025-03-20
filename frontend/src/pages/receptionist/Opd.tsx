@@ -54,6 +54,7 @@ const fields = [
     placeholder: "Enter Pregnancy Status",
   },
 ];
+
 function Opd() {
   const [focus, setFocus] = useState({
     staffId: false,
@@ -82,8 +83,9 @@ function Opd() {
     glucose: "",
     respiratory_rate: "",
     pregnant: false,
-    prescription: [], 
+    prescription: [],
   });
+
   const [data, setData] = useState<userInterface[]>([]);
   async function handle(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -137,7 +139,11 @@ function Opd() {
                 />
               </div>
               {focus.staffId && (
-                <Tab data={data} setInputValue={setInputValue} setData={setData} />
+                <Tab
+                  data={data}
+                  setInputValue={setInputValue}
+                  setData={setData}
+                />
               )}
             </div>
             <div className="relative">
@@ -161,7 +167,11 @@ function Opd() {
                 />
               </div>
               {focus.roll_no && (
-                <Tab data={data} setInputValue={setInputValue} setData={setData} />
+                <Tab
+                  data={data}
+                  setInputValue={setInputValue}
+                  setData={setData}
+                />
               )}
             </div>
             <div className="space-y-2">
@@ -207,7 +217,11 @@ function Opd() {
                 />
               </div>
               {focus.mobile_no && (
-                <Tab data={data} setInputValue={setInputValue} setData={setData} />
+                <Tab
+                  data={data}
+                  setInputValue={setInputValue}
+                  setData={setData}
+                />
               )}
             </div>
             <div className="space-y-2">

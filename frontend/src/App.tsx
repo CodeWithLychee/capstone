@@ -9,6 +9,7 @@ import Admin from "./pages/admin/Admin.tsx";
 import AddAccount from "./pages/admin/AddAccount.tsx";
 import Opd from "./pages/receptionist/Opd.tsx";
 import Dashboard from "./pages/common/Dashboard.tsx";
+import DoctorPatientQueue from "./pages/doctor/DoctorPatientQueue.tsx";
 
 const App = () => {
   const router = createBrowserRouter([
@@ -26,11 +27,11 @@ const App = () => {
       children: [
         {
           path: "admin",
-          children:[
+          children: [
             { path: "dashboard", element: <Dashboard /> },
-            { path: "dailydetails", element: <Admin /> }, 
+            { path: "dailydetails", element: <Admin /> },
             { path: "addaccount", element: <AddAccount /> },
-          ]
+          ],
         },
         {
           path: "receptionist",
@@ -44,8 +45,8 @@ const App = () => {
           path: "doctor",
           children: [
             { path: "dashboard", element: <Dashboard /> },
+            { path: "patientqueue", element: <DoctorPatientQueue /> },
             { path: "prescribe", element: <Prescribe /> },
-            { path: "opdLog", element: <OpdLog /> },
           ],
         },
         {

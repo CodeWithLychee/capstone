@@ -4,12 +4,12 @@ import prescription from "../models/prescription.js";
 import user from "../models/user.js";
 import medicine from "../models/medicine.js";
 
-export const getPatientQueue = async (_req: Request, res: Response) => {
+export const getPatientQueue = async (req: Request, res: Response) => {
   try {
     const queue = await patientQueue
       .find({ status: false })
       .populate("patient_id")
-      // .populate("prescription_id")
+      .populate("prescription_id")
       .sort({ createdAt: 1 });
 
     res.status(200).json({
@@ -48,28 +48,31 @@ export const createPrescription = async (_req: Request, res: Response) => {
     }
 
     const newPrescription = new prescription({
-      user_id,
+      patient_id: user_id,
       doctor_id,
       paramedic_notes,
       vitals: {
-        blood_pressure: vitals?.blood_pressure || "",
+        bp: vitals?.bp || "",
         spo2: vitals?.spo2 || "",
         temperature: vitals?.temperature || "",
         heart_rate: vitals?.heart_rate || "",
+        bmi: vitals?.bmi || "",
+        glucose: vitals?.glucose || "",
         respiratory_rate: vitals?.respiratory_rate || "",
+        pregnant: vitals?.pregnant || false,
       },
       prescription: {
         history: patient_prescription?.history || "",
-        chief_complaints: patient_prescription?.chief_complaints || "",
+        co: patient_prescription?.co || "",
         allergy: patient_prescription?.allergy || "",
-        diagnosis: patient_prescription?.diagnosis || "",
         investigation: patient_prescription?.investigation || "",
+        diagnosis: patient_prescription?.diagnosis || "",
         prognosis: patient_prescription?.prognosis || "",
         advice: patient_prescription?.advice || "",
       },
       medicine: medicine?.map((med: any) => ({
         m_id: med?.m_id || "",
-        name: med?.name || "",
+        quantity: med?.quantity || "",
         frequency: med?.frequency || "",
         duration: med?.duration || "",
         instructions: med?.instructions || "",

@@ -97,7 +97,7 @@ const links = [
       },
       {
         name: "Patient Queue",
-        href: "/app/doctor/opdLog",
+        href: "/app/doctor/patientqueue",
         logo: <ClipboardList className="mr-3 h-5 w-5" />,
       },
       {
@@ -113,25 +113,25 @@ const links = [
     ],
   },
   {
-    role:"admin",
-    links:[
+    role: "admin",
+    links: [
       {
         name: "Dashboard",
-        href:"/app/admin/dashboard",
+        href: "/app/admin/dashboard",
         logo: <LayoutDashboard className="mr-3 h-5 w-5" />,
       },
       {
         name: "DailyDetails",
-        href:"/app/admin/dailydetails",
+        href: "/app/admin/dailydetails",
         logo: <LayoutDashboard className="mr-3 h-5 w-5" />,
       },
       {
         name: "AddAccount",
-        href:"/app/admin/addaccount",
+        href: "/app/admin/addaccount",
         logo: <GraduationCap className="mr-3 h-5 w-5" />,
-      }
-    ]
-  }
+      },
+    ],
+  },
 ];
 
 export default function Sidebar() {
