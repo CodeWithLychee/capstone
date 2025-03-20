@@ -6,36 +6,35 @@ import { Label } from "@/components/ui/label";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/myprofilecomponents/ui/avatar";
 import { User } from "lucide-react";
 import { userContext } from "@/store/userContext";
+// import { userInterface } from "@/lib/types";
 
 
-interface UserType {
-    _id: string;
-    name: string;
-    email: string;
-    gender: string;
-    role: string;
-    phno: number;
-    dob: Date;
-    addr: string;
-    staff_id: string;
-    roll_no: string;
-    specialization?: string; // Optional for doctors
-  }
+// interface UserType {
+//     _id: string;
+//     name: string;
+//     email: string;
+//     gender: string;
+//     role: string;
+//     phno: number;
+//     dob: Date;
+//     addr: string;
+//     staff_id: string;
+//     roll_no: string;
+//     specialization?: string; // Optional for doctors
+//   }
 
 
 export default function ProfileForm() {
-    const { user } = useContext(userContext) as { user: UserType | null };
-    const role = user?.role; // e.g., "doctor", "receptionist", "pharmacist"
-
-  // Initialize state with default values using the correct property names
+    const { user } = useContext(userContext);
+    const role = user?.role; 
   const [formData, setFormData] = useState({
     name: user?.name || "",
-    phno: user?.phno?.toString() || "",
+    phno: user?.mobile_no?.toString() || "",
     email: user?.email || "",
     gender: user?.gender || "",
     dob: user?.dob ? new Date(user.dob).toISOString().split("T")[0] : "",
     addr: user?.addr || "",
-    specialization: user?.specialization || "", // Only for doctors
+    // specialization: user?.specialization || "", 
   });
 
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -187,7 +186,7 @@ export default function ProfileForm() {
             <Input id="addr" name="addr" value={formData.addr} onChange={handleInputChange} />
           </div>
 
-          {/* For doctors: Show Specialization field */}
+          {/* For doctors: Show Specialization field
           {role === "doctor" && (
             <div className="space-y-2">
               <Label htmlFor="specialization">Specialization</Label>
@@ -198,7 +197,7 @@ export default function ProfileForm() {
                 onChange={handleInputChange}
               />
             </div>
-          )}
+          )} */}
         </div>
 
         <div className="flex justify-end">
