@@ -8,6 +8,7 @@ const schema = new Schema(
     password: { type: String, required: true },
     role: { type: String, required: true },
     gender: { type: String, required: true},
+    age: { type: String },
     mobile_no: { type: String, required: true },
     dob: { type: Date },
     email: { type: String, unique: true, lowercase: true },
