@@ -2,10 +2,10 @@ import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Checkbox } from "@/components/ui/checkbox";
 import Button from "@/components/Button";
 import Access from "../common/access";
-import { useContext } from "react";
+import { useContext, ChangeEvent } from "react";
+import { toast } from "react-toastify";
 
 import {
   Collapsible,
@@ -23,6 +23,7 @@ import {
 import { ChevronDown } from "lucide-react";
 import { prescriptionContext } from "@/store/prescriptionContext";
 import { dataPass } from "@/lib/types.ts";
+import { api } from "@/lib/utils";
 
 const vitals: Array<{
   id: string;
@@ -63,12 +64,13 @@ const vitals: Array<{
     placeholder: "Enter Respiratory Rate",
   },
 ];
+
 const prescriptionFields = [
   { id: "history", label: "History", placeholder: "Enter medical history" },
   { id: "co", label: "C/o", placeholder: "Enter chief complaints" },
-  { id: "allergies", label: "Allergy(s)", placeholder: "Enter allergies" },
+  { id: "allergy", label: "Allergy(s)", placeholder: "Enter allergies" },
   {
-    id: "investigations",
+    id: "investigation",
     label: "Investigation(s)",
     placeholder: "Enter investigations",
   },
@@ -84,6 +86,39 @@ const prescriptionFields = [
     placeholder: "Enter advice",
   },
 ];
+type Medicine = {
+  m_id: string;
+  frequency: string;
+  duration: string;
+  instructions: string;
+};
+
+type InputValue = {
+  paramedic_notes: string;
+  vitals: {
+    bp: string;
+    spo2: string;
+    temperature: string;
+    heart_rate: string;
+    bmi: string;
+    glucose: string;
+    respiratory_rate: string;
+    pregnant: boolean;
+  };
+  treatment_plan: {
+    history: string;
+    co: string;
+    allergy: string;
+    investigation: string;
+    diagnosis: string;
+    prognosis: string;
+    advice: string;
+  };
+  medicine: Medicine[];
+  referred_outside?: boolean;
+  rest_recommendation?: string;
+  follow_up_date?: string;
+};
 
 export default function Prescribe() {
   const [isVitalsOpen, setIsVitalsOpen] = useState(false);
@@ -91,10 +126,111 @@ export default function Prescribe() {
   const [isPharmacyMedicationOpen, setIsPharmacyMedicationOpen] =
     useState(false);
   const { prescription } = useContext(prescriptionContext);
-  console.log(
-    "mai hu prescribe page mai now see the data jo queue sai aya ",
-    prescription,
-  );
+
+  const [inputValue, setInputValue] = useState<InputValue>({
+    paramedic_notes: "",
+    vitals: {
+      bp: "",
+      spo2: "",
+      temperature: "",
+      heart_rate: "",
+      bmi: "",
+      glucose: "",
+      respiratory_rate: "",
+      pregnant: false,
+    },
+    treatment_plan: {
+      history: "",
+      co: "",
+      allergy: "",
+      investigation: "",
+      diagnosis: "",
+      prognosis: "",
+      advice: "",
+    },
+    medicine: [], // Start with an empty array
+    referred_outside: false,
+    rest_recommendation: "",
+    follow_up_date: "",
+  });
+
+  async function handle(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+
+    try {
+      const response = await api.post("/doctor/prescription", {
+        patient_id: prescription._id,
+        doctor_id: "67d6a54f84ae5b5080fd855a",
+        paramedic_notes: inputValue.paramedic_notes,
+        vitals: inputValue.vitals,
+        treatment_plan: inputValue.treatment_plan,
+        medicine: inputValue.medicine,
+        referred_outside: inputValue.referred_outside,
+        rest_recommendation: inputValue.rest_recommendation,
+        follow_up_date: inputValue.follow_up_date,
+      });
+
+      if (response.status == 200) {
+        toast.success(response.data.message);
+      } else {
+        toast.error(response.data.message);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async function handleChange(
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) {
+    const target = e.target;
+
+    if (target instanceof HTMLInputElement && target.type === "checkbox") {
+      const { name, checked } = target;
+      setInputValue((prevState) => ({
+        ...prevState,
+        [name]: checked,
+      }));
+    } else {
+      const { name, value } = target;
+      setInputValue((prevState) => ({
+        ...prevState,
+        [name]: value,
+      }));
+    }
+  }
+
+  function handleMedicineChange(
+    e: ChangeEvent<HTMLInputElement>,
+    index: number,
+  ) {
+    const { name, value } = e.target;
+    setInputValue((prevState) => {
+      const updatedMedicines = [...prevState.medicine];
+      updatedMedicines[index] = {
+        ...updatedMedicines[index],
+        [name]: value,
+      };
+      return { ...prevState, medicine: updatedMedicines };
+    });
+  }
+
+  function addMedicine() {
+    setInputValue((prevState) => ({
+      ...prevState,
+      medicine: [
+        ...prevState.medicine,
+        { m_id: "", frequency: "", duration: "", instructions: "" },
+      ],
+    }));
+  }
+
+  function removeMedicine(index: number) {
+    setInputValue((prevState) => ({
+      ...prevState,
+      medicine: prevState.medicine.filter((_, i) => i !== index),
+    }));
+  }
 
   return (
     <Access text={["doctor"]}>
@@ -103,7 +239,7 @@ export default function Prescribe() {
           Patient Prescription
         </h1>
         <div className="space-y-6 bg-white p-8 rounded-2xl">
-          <form className="space-y-6 max-w-7xl mx-auto ">
+          <form className="space-y-6 max-w-7xl mx-auto " onSubmit={handle}>
             <div className="space-y-4">
               <h2 className="text-lg font-semibold">Patient Details</h2>
               <div className="grid grid-cols-2 gap-4 bg-gray-50 p-4 rounded-lg">
@@ -123,9 +259,13 @@ export default function Prescribe() {
                   <Label className="text-gray-500">Age</Label>
                   <p className="font-medium">{prescription.age}</p>
                 </div>
-                <div className="space-y-1 col-span-2">
+                <div className="space-y-1 ">
                   <Label className="text-gray-500">Email</Label>
                   <p className="font-medium">{prescription.email}</p>
+                </div>
+                <div className="space-y-1 ">
+                  <Label className="text-gray-500">Mobile Number</Label>
+                  <p className="font-medium">{prescription.mobile_no}</p>
                 </div>
               </div>
               <div className="space-y-2">
@@ -134,6 +274,8 @@ export default function Prescribe() {
                   id="notes"
                   placeholder="Enter paramedic notes"
                   className="h-24"
+                  name="paramedic_notes"
+                  onChange={handleChange}
                 />
               </div>
             </div>
@@ -160,7 +302,19 @@ export default function Prescribe() {
                       <Input
                         id={id}
                         placeholder={placeholder}
-                        defaultValue={String(prescription?.[name] ?? "")}
+                        name={`vitals.${name}`} // For nested object keys like vitals.bp
+                        value={(inputValue.vitals as any)[name]} // Access nested state values dynamically
+                        onChange={(e) => {
+                          const { name, value } = e.target;
+                          const key = name.split(".")[1]; // Extract nested key (e.g., bp)
+                          setInputValue((prevState) => ({
+                            ...prevState,
+                            vitals: {
+                              ...prevState.vitals,
+                              [key]: value,
+                            },
+                          }));
+                        }}
                       />
                     </div>
                   ))}
@@ -187,7 +341,24 @@ export default function Prescribe() {
                   {prescriptionFields.map(({ id, label, placeholder }) => (
                     <div key={id} className="space-y-2">
                       <Label htmlFor={id}>{label}</Label>
-                      <Textarea id={id} placeholder={placeholder} />
+                      <Textarea
+                        id={id}
+                        placeholder={placeholder}
+                        name={`treatment_plan.${id}`}
+                        value={(inputValue.treatment_plan as any)[id]}
+                        onChange={(e) => {
+                          const { name, value } = e.target;
+                          const key = name.split(".")[1];
+                          setInputValue((prevState) => ({
+                            ...prevState,
+                            treatment_plan: {
+                              // Corrected here
+                              ...prevState.treatment_plan,
+                              [key]: value,
+                            },
+                          }));
+                        }}
+                      />
                     </div>
                   ))}
                 </div>
@@ -223,54 +394,109 @@ export default function Prescribe() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
+                    {inputValue.medicine.map((med, index) => (
+                      <TableRow key={index}>
+                        <TableCell>{index + 1}.</TableCell>
+                        <TableCell>
+                          <Input
+                            placeholder="Enter medicine"
+                            name="m_id"
+                            value={med.m_id || ""}
+                            onChange={(e) => handleMedicineChange(e, index)}
+                          />
+                        </TableCell>
+                        <TableCell>
+                          <Input
+                            placeholder="Enter frequency"
+                            name="frequency"
+                            value={med.frequency || ""}
+                            onChange={(e) => handleMedicineChange(e, index)}
+                          />
+                        </TableCell>
+                        <TableCell>
+                          <Input
+                            placeholder="Enter duration"
+                            name="duration"
+                            value={med.duration || ""}
+                            onChange={(e) => handleMedicineChange(e, index)}
+                          />
+                        </TableCell>
+                        <TableCell>
+                          <Input
+                            placeholder="Enter instructions"
+                            name="instructions"
+                            value={med.instructions || ""}
+                            onChange={(e) => handleMedicineChange(e, index)}
+                          />
+                        </TableCell>
+                        <TableCell>
+                          <button onClick={() => removeMedicine(index)}>
+                            Remove
+                          </button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                    {/* Add Medicine Button */}
                     <TableRow>
-                      <TableCell>1.</TableCell>
-                      <TableCell>
-                        <Input placeholder="Enter medicine" />
-                      </TableCell>
-                      <TableCell>
-                        <Input placeholder="Enter frequency" />
-                      </TableCell>
-                      <TableCell>
-                        <Input placeholder="Enter duration" />
-                      </TableCell>
-                      <TableCell>
-                        <Input placeholder="Enter instructions" />
-                      </TableCell>
-                      <TableCell>
-                        <Button>ADD</Button>
+                      <TableCell colSpan={6}>
+                        <div className="w-full h-full flex justify-center items-center">
+                          <button
+                            onClick={addMedicine}
+                            className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-md shadow-md transition-all duration-300 "
+                          >
+                            Add Medicine
+                          </button>
+                        </div>
                       </TableCell>
                     </TableRow>
                   </TableBody>
                 </Table>
               </CollapsibleContent>
             </Collapsible>
+
             {/* Additional Fields */}
             <div className="space-y-4">
               <div className="flex items-center space-x-2">
-                <Checkbox id="referred" />
-                <Label htmlFor="referred">Referred Outside?</Label>
+                <input
+                  type="checkbox"
+                  id="referred_outside"
+                  name="referred_outside"
+                  onChange={handleChange}
+                ></input>
+                <Label htmlFor="referred_outside">Referred Outside?</Label>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
+                {/* Rest Recommendation */}
                 <div className="space-y-2">
-                  <Label htmlFor="rest">Recommend Rest?</Label>
+                  <Label htmlFor="rest_recommendation">Recommend Rest?</Label>
                   <Textarea
-                    id="rest"
+                    id="rest_recommendation"
+                    name="rest_recommendation"
                     placeholder={"Enter rest recommendation"}
+                    value={inputValue.rest_recommendation || ""}
+                    onChange={handleChange}
                   />
                 </div>
-                <div className="space-y-2 ">
-                  <Label htmlFor="followup">Follow-Up Date</Label>
+
+                {/* Follow-Up Date */}
+                <div className="space-y-2">
+                  <Label htmlFor="follow_up_date">Follow-Up Date</Label>
                   <div className="w-40">
-                    <Input id="followup" type="date" />
+                    <Input
+                      id="follow_up_date"
+                      type="date"
+                      name="follow_up_date"
+                      value={inputValue.follow_up_date || ""}
+                      onChange={handleChange}
+                    />
                   </div>
                 </div>
               </div>
+            </div>
 
-              <div className="flex justify-end">
-                <Button>Save Details</Button>
-              </div>
+            <div className="flex justify-end">
+              <Button>Save Details</Button>
             </div>
           </form>
         </div>
