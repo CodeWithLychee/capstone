@@ -86,6 +86,39 @@ const prescriptionFields = [
     placeholder: "Enter advice",
   },
 ];
+type Medicine = {
+  m_id: string;
+  frequency: string;
+  duration: string;
+  instructions: string;
+};
+
+type InputValue = {
+  paramedic_notes: string;
+  vitals: {
+    bp: string;
+    spo2: string;
+    temperature: string;
+    heart_rate: string;
+    bmi: string;
+    glucose: string;
+    respiratory_rate: string;
+    pregnant: boolean;
+  };
+  treatment_plan: {
+    history: string;
+    co: string;
+    allergy: string;
+    investigation: string;
+    diagnosis: string;
+    prognosis: string;
+    advice: string;
+  };
+  medicine: Medicine[];
+  referred_outside?: boolean;
+  rest_recommendation?: string;
+  follow_up_date?: string;
+};
 
 export default function Prescribe() {
   const [isVitalsOpen, setIsVitalsOpen] = useState(false);
@@ -93,12 +126,8 @@ export default function Prescribe() {
   const [isPharmacyMedicationOpen, setIsPharmacyMedicationOpen] =
     useState(false);
   const { prescription } = useContext(prescriptionContext);
-  console.log(
-    "mai hu prescribe page mai now see the data jo queue sai aya ",
-    prescription,
-  );
 
-  const [inputValue, setInputValue] = useState({
+  const [inputValue, setInputValue] = useState<InputValue>({
     paramedic_notes: "",
     vitals: {
       bp: "",
@@ -110,7 +139,7 @@ export default function Prescribe() {
       respiratory_rate: "",
       pregnant: false,
     },
-    prescription: {
+    treatment_plan: {
       history: "",
       co: "",
       allergy: "",
@@ -119,7 +148,7 @@ export default function Prescribe() {
       prognosis: "",
       advice: "",
     },
-    medicine: [],
+    medicine: [], // Start with an empty array
     referred_outside: false,
     rest_recommendation: "",
     follow_up_date: "",
@@ -129,25 +158,12 @@ export default function Prescribe() {
     e.preventDefault();
 
     try {
-      console.log("data save hone jara ");
-      console.log(prescription._id);
-
-      console.log(
-        inputValue.paramedic_notes,
-        inputValue.vitals,
-        inputValue.prescription,
-        inputValue.medicine,
-        inputValue.referred_outside,
-        inputValue.rest_recommendation,
-        inputValue.follow_up_date,
-      );
-
       const response = await api.post("/doctor/prescription", {
         patient_id: prescription._id,
         doctor_id: "67d6a54f84ae5b5080fd855a",
         paramedic_notes: inputValue.paramedic_notes,
         vitals: inputValue.vitals,
-        prescription: inputValue.prescription,
+        treatment_plan: inputValue.treatment_plan,
         medicine: inputValue.medicine,
         referred_outside: inputValue.referred_outside,
         rest_recommendation: inputValue.rest_recommendation,
@@ -182,6 +198,38 @@ export default function Prescribe() {
         [name]: value,
       }));
     }
+  }
+
+  function handleMedicineChange(
+    e: ChangeEvent<HTMLInputElement>,
+    index: number,
+  ) {
+    const { name, value } = e.target;
+    setInputValue((prevState) => {
+      const updatedMedicines = [...prevState.medicine];
+      updatedMedicines[index] = {
+        ...updatedMedicines[index],
+        [name]: value,
+      };
+      return { ...prevState, medicine: updatedMedicines };
+    });
+  }
+
+  function addMedicine() {
+    setInputValue((prevState) => ({
+      ...prevState,
+      medicine: [
+        ...prevState.medicine,
+        { m_id: "", frequency: "", duration: "", instructions: "" },
+      ],
+    }));
+  }
+
+  function removeMedicine(index: number) {
+    setInputValue((prevState) => ({
+      ...prevState,
+      medicine: prevState.medicine.filter((_, i) => i !== index),
+    }));
   }
 
   return (
@@ -296,15 +344,16 @@ export default function Prescribe() {
                       <Textarea
                         id={id}
                         placeholder={placeholder}
-                        name={`prescription.${id}`}
-                        value={(inputValue.prescription as any)[id]}
+                        name={`treatment_plan.${id}`}
+                        value={(inputValue.treatment_plan as any)[id]}
                         onChange={(e) => {
                           const { name, value } = e.target;
                           const key = name.split(".")[1];
                           setInputValue((prevState) => ({
                             ...prevState,
-                            prescription: {
-                              ...prevState.prescription,
+                            treatment_plan: {
+                              // Corrected here
+                              ...prevState.treatment_plan,
                               [key]: value,
                             },
                           }));
@@ -345,42 +394,59 @@ export default function Prescribe() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
+                    {inputValue.medicine.map((med, index) => (
+                      <TableRow key={index}>
+                        <TableCell>{index + 1}.</TableCell>
+                        <TableCell>
+                          <Input
+                            placeholder="Enter medicine"
+                            name="m_id"
+                            value={med.m_id || ""}
+                            onChange={(e) => handleMedicineChange(e, index)}
+                          />
+                        </TableCell>
+                        <TableCell>
+                          <Input
+                            placeholder="Enter frequency"
+                            name="frequency"
+                            value={med.frequency || ""}
+                            onChange={(e) => handleMedicineChange(e, index)}
+                          />
+                        </TableCell>
+                        <TableCell>
+                          <Input
+                            placeholder="Enter duration"
+                            name="duration"
+                            value={med.duration || ""}
+                            onChange={(e) => handleMedicineChange(e, index)}
+                          />
+                        </TableCell>
+                        <TableCell>
+                          <Input
+                            placeholder="Enter instructions"
+                            name="instructions"
+                            value={med.instructions || ""}
+                            onChange={(e) => handleMedicineChange(e, index)}
+                          />
+                        </TableCell>
+                        <TableCell>
+                          <button onClick={() => removeMedicine(index)}>
+                            Remove
+                          </button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                    {/* Add Medicine Button */}
                     <TableRow>
-                      <TableCell>1.</TableCell>
-                      <TableCell>
-                        <Input
-                          placeholder="Enter medicine"
-                          name="medicine_name"
-                          value={inputValue.medicine_name || ""}
-                          onChange={handleChange}
-                        />
-                      </TableCell>
-                      <TableCell>
-                        <Input
-                          placeholder="Enter frequency"
-                          name="frequency"
-                          value={inputValue.frequency || ""}
-                          onChange={handleChange}
-                        />
-                      </TableCell>
-                      <TableCell>
-                        <Input
-                          placeholder="Enter duration"
-                          name="duration"
-                          value={inputValue.duration || ""}
-                          onChange={handleChange}
-                        />
-                      </TableCell>
-                      <TableCell>
-                        <Input
-                          placeholder="Enter instructions"
-                          name="instructions"
-                          value={inputValue.instructions || ""}
-                          onChange={handleChange}
-                        />
-                      </TableCell>
-                      <TableCell>
-                        <Button>ADD</Button>
+                      <TableCell colSpan={6}>
+                        <div className="w-full h-full flex justify-center items-center">
+                          <button
+                            onClick={addMedicine}
+                            className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-md shadow-md transition-all duration-300 "
+                          >
+                            Add Medicine
+                          </button>
+                        </div>
                       </TableCell>
                     </TableRow>
                   </TableBody>

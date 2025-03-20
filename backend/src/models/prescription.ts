@@ -19,7 +19,7 @@ const schema = new Schema(
       respiratory_rate: { type: String },
       pregnant: { type: Boolean },
     },
-    prescription: {
+    treatment_plan: {
       history: { type: String },
       co: { type: String },
       allergy: { type: String },
