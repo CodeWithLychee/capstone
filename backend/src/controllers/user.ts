@@ -4,7 +4,6 @@ import jwt from "jsonwebtoken";
 import user from "../models/user.js";
 import { createToken } from "../utils/jwt.js";
 import { userInterface } from "../types/user";
-import patient from "../models/patient.js";
 import Queue from "../models/patientQueue.js";
 import Prescription from "../models/prescription.js";
 

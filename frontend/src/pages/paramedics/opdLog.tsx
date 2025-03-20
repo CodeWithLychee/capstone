@@ -2,51 +2,24 @@ import Button from "@/components/Button";
 import Access from "../common/access";
 import { useEffect, useState } from "react";
 import { api } from "../../lib/utils.ts";
-import { PatientQueue } from "@/lib/types.ts";
-
-// const patients: Patient[] = [
-//   {
-//     id: 1,
-//     name: "Prerit Bhagat",
-//     rollNumber: "102217030",
-//     age: 20,
-//     phoneNumber: "+91 81988944400",
-//     prescribedBy: "",
-//   },
-//   {
-//     id: 2,
-//     name: "Rahul Kumar",
-//     rollNumber: "102217031",
-//     age: 20,
-//     phoneNumber: "+91 81988944401",
-//     prescribedBy: "",
-//   },
-//   {
-//     id: 3,
-//     name: "Rahul Kumar",
-//     rollNumber: "102217032",
-//     age: 20,
-//     phoneNumber: "+91 81988944402",
-//     prescribedBy: "",
-//   },
-//   {
-//     id: 4,
-//     name: "Rahul Kumar",
-//     rollNumber: "102217033",
-//     age: 20,
-//     phoneNumber: "+91 81988944403",
-//     prescribedBy: "",
-//   },
-//   // More patients can be added here
-// ];
+import { PatientQueue, dataPass } from "@/lib/types.ts";
+import { useNavigate } from "react-router-dom";
+import { useContext } from "react";
+import { prescriptionContext } from "../../store/prescriptionContext.ts";
 
 export default function OpdLog() {
   const [patients, setPatients] = useState<PatientQueue[]>([]);
+  const navigate = useNavigate();
+  const { setPrescription } = useContext(prescriptionContext);
+  function handle(data: dataPass) {
+    setPrescription(data);
+    console.log(data);
+    navigate("/app/doctor/prescribe");
+  }
   useEffect(() => {
     const fetchPatients = async () => {
       const response = await api.get("/user/getOpdLog/?status=false");
       const data = await response.data;
-      console.log(data);
       setPatients(data);
     };
     const interval = setInterval(fetchPatients, 2000);
@@ -105,7 +78,12 @@ export default function OpdLog() {
                     <td className="px-6 py-4 text-sm text-gray-900">
                       {patient.prescription_id.doctor_id}
                     </td>
-                    <td className="px-6 py-4 text-sm">
+                    <td
+                      className="px-6 py-4 text-sm"
+                      onClick={() =>
+                        handle({...patient.patient_id,...patient.prescription_id.vitals})
+                      }
+                    >
                       <Button>View</Button>
                     </td>
                   </tr>

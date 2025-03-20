@@ -5,6 +5,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import Button from "@/components/Button";
 import Access from "../common/access";
+import { useContext } from "react";
 
 import {
   Collapsible,
@@ -20,58 +21,77 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { ChevronDown } from "lucide-react";
+import { prescriptionContext } from "@/store/prescriptionContext";
+import { dataPass } from "@/lib/types.ts";
+
+const vitals: Array<{
+  id: string;
+  label: string;
+  name: keyof dataPass;
+  placeholder: string;
+}> = [
+  {
+    id: "bp",
+    label: "Blood Pressure",
+    name: "bp",
+    placeholder: "Enter Blood Pressure",
+  },
+  { id: "spo2", label: "SpO2", name: "spo2", placeholder: "Enter SpO2" },
+  {
+    id: "temperature",
+    name: "temperature",
+    label: "Temperature",
+    placeholder: "Enter Temperature",
+  },
+  {
+    id: "heartRate",
+    label: "Heart Rate",
+    name: "heart_rate",
+    placeholder: "Enter Heart Rate",
+  },
+  { id: "bmi", label: "BMI", name: "bmi", placeholder: "Enter BMI" },
+  {
+    id: "glucose",
+    label: "Glucose",
+    name: "glucose",
+    placeholder: "Enter Glucose",
+  },
+  {
+    id: "respiratoryRate",
+    label: "Respiratory Rate",
+    name: "respiratory_rate",
+    placeholder: "Enter Respiratory Rate",
+  },
+];
+const prescriptionFields = [
+  { id: "history", label: "History", placeholder: "Enter medical history" },
+  { id: "co", label: "C/o", placeholder: "Enter chief complaints" },
+  { id: "allergies", label: "Allergy(s)", placeholder: "Enter allergies" },
+  {
+    id: "investigations",
+    label: "Investigation(s)",
+    placeholder: "Enter investigations",
+  },
+  {
+    id: "diagnosis-icd",
+    label: "Diagnosis (ICD Code & Description)",
+    placeholder: "Enter ICD diagnosis",
+  },
+  { id: "prognosis", label: "Prognosis", placeholder: "Enter prognosis" },
+  {
+    id: "advice",
+    label: "Doctor’s Advice / Recommendations",
+    placeholder: "Enter advice",
+  },
+];
 
 export default function Prescribe() {
   const [isVitalsOpen, setIsVitalsOpen] = useState(false);
   const [isPrescriptionOpen, setIsPrescriptionOpen] = useState(false);
   const [isPharmacyMedicationOpen, setIsPharmacyMedicationOpen] =
     useState(false);
-
-  const vitals = [
-    { id: "bp", label: "Blood Pressure", placeholder: "Enter blood pressure" },
-    { id: "spo2", label: "SpO2", placeholder: "Enter SpO2" },
-    {
-      id: "temperature",
-      label: "Temperature",
-      placeholder: "Enter temperature",
-    },
-    { id: "heart-rate", label: "Heart Rate", placeholder: "Enter heart rate" },
-    {
-      id: "respiratory-rate",
-      label: "Respiratory Rate",
-      placeholder: "Enter respiratory rate",
-    },
-  ];
-  const prescriptionFields = [
-    { id: "history", label: "History", placeholder: "Enter medical history" },
-    { id: "co", label: "C/o", placeholder: "Enter chief complaints" },
-    { id: "allergies", label: "Allergy(s)", placeholder: "Enter allergies" },
-    {
-      id: "investigations",
-      label: "Investigation(s)",
-      placeholder: "Enter investigations",
-    },
-    {
-      id: "diagnosis-icd",
-      label: "Diagnosis (ICD Code & Description)",
-      placeholder: "Enter ICD diagnosis",
-    },
-    { id: "prognosis", label: "Prognosis", placeholder: "Enter prognosis" },
-    {
-      id: "advice",
-      label: "Doctor’s Advice / Recommendations",
-      placeholder: "Enter advice",
-    },
-  ];
-
-  const patientData = {
-    name: "Abhinav Sharma",
-    rollNo: "102203255",
-    gender: "M",
-    age: "21",
-    email: "asharma5_be22@thapar.edu",
-  };
-
+  const { prescription } = useContext(prescriptionContext);
+  console.log(prescription);
   return (
     <Access text={["doctor"]}>
       <div className="p-6 bg-zinc-100 ">
@@ -85,23 +105,23 @@ export default function Prescribe() {
               <div className="grid grid-cols-2 gap-4 bg-gray-50 p-4 rounded-lg">
                 <div className="space-y-1">
                   <Label className="text-gray-500">Name</Label>
-                  <p className="font-medium">{patientData.name}</p>
+                  <p className="font-medium">{prescription.name}</p>
                 </div>
                 <div className="space-y-1">
                   <Label className="text-gray-500">Roll No/Staff ID</Label>
-                  <p className="font-medium">{patientData.rollNo}</p>
+                  <p className="font-medium">{prescription.roll_no}</p>
                 </div>
                 <div className="space-y-1">
                   <Label className="text-gray-500">Gender</Label>
-                  <p className="font-medium">{patientData.gender}</p>
+                  <p className="font-medium">{prescription.gender}</p>
                 </div>
                 <div className="space-y-1">
                   <Label className="text-gray-500">Age</Label>
-                  <p className="font-medium">{patientData.age}</p>
+                  <p className="font-medium">{prescription.age}</p>
                 </div>
                 <div className="space-y-1 col-span-2">
                   <Label className="text-gray-500">Email</Label>
-                  <p className="font-medium">{patientData.email}</p>
+                  <p className="font-medium">{prescription.email}</p>
                 </div>
               </div>
               <div className="space-y-2">
@@ -130,10 +150,14 @@ export default function Prescribe() {
               </CollapsibleTrigger>
               <CollapsibleContent className="p-4 border-t">
                 <div className="grid grid-cols-2 gap-4">
-                  {vitals.map(({ id, label, placeholder }) => (
+                  {vitals.map(({ id, label, name, placeholder }) => (
                     <div key={id} className="space-y-2">
                       <Label htmlFor={id}>{label}</Label>
-                      <Input id={id} placeholder={placeholder} />
+                      <Input
+                        id={id}
+                        placeholder={placeholder}
+                        defaultValue={String(prescription?.[name] ?? "")}
+                      />
                     </div>
                   ))}
                 </div>

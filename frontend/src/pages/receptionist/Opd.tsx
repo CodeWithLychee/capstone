@@ -12,7 +12,7 @@ import Access from "../common/access";
 import { api } from "../../lib/utils.ts";
 import { toast, ToastContainer } from "react-toastify";
 import { ChangeEvent } from "react";
-import { userInterface } from "@/lib/types.ts";
+import { userInterface, opdPageInterface } from "@/lib/types.ts";
 
 const fields = [
   {
@@ -61,10 +61,9 @@ function Opd() {
     mobile_no: false,
   });
   const [isOpen, setIsOpen] = useState(false);
-  const [inputValue, setInputValue] = useState<userInterface>({
+  const [inputValue, setInputValue] = useState<opdPageInterface>({
     staffId: "",
     roll_no: "",
-    role: "",
     addr: "",
     gender: "",
     email: "",
@@ -83,6 +82,7 @@ function Opd() {
     glucose: "",
     respiratory_rate: "",
     pregnant: false,
+    prescription: [], 
   });
   const [data, setData] = useState<userInterface[]>([]);
   async function handle(e: React.FormEvent<HTMLFormElement>) {
@@ -325,7 +325,7 @@ function Tab({
 }: {
   data: userInterface[];
   setData: React.Dispatch<React.SetStateAction<userInterface[]>>;
-  setInputValue: React.Dispatch<React.SetStateAction<userInterface>>;
+  setInputValue: React.Dispatch<React.SetStateAction<opdPageInterface>>;
 }): JSX.Element {
   return (
     <div className="absolute overflow-x-hidden h-max overflow-scroll px-2 bg-[#f5f5f5] rounded-lg">
