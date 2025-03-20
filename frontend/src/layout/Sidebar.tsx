@@ -112,6 +112,26 @@ const links = [
       },
     ],
   },
+  {
+    role:"admin",
+    links:[
+      {
+        name: "Dashboard",
+        href:"/app/admin/dashboard",
+        logo: <LayoutDashboard className="mr-3 h-5 w-5" />,
+      },
+      {
+        name: "DailyDetails",
+        href:"/app/admin/dailydetails",
+        logo: <LayoutDashboard className="mr-3 h-5 w-5" />,
+      },
+      {
+        name: "AddAccount",
+        href:"/app/admin/addaccount",
+        logo: <GraduationCap className="mr-3 h-5 w-5" />,
+      }
+    ]
+  }
 ];
 
 export default function Sidebar() {

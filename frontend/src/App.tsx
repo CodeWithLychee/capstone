@@ -6,6 +6,7 @@ import OpdLog from "./pages/paramedics/opdLog.tsx";
 import Prescribe from "./pages/doctor/Prescribe";
 import { InventoryForm } from "./pages/paramedics/Inventory.tsx";
 import Admin from "./pages/admin/Admin.tsx";
+import AddAccount from "./pages/admin/AddAccount.tsx";
 import Opd from "./pages/receptionist/Opd.tsx";
 import Dashboard from "./pages/common/Dashboard.tsx";
 
@@ -25,7 +26,11 @@ const App = () => {
       children: [
         {
           path: "admin",
-          element: <Admin />,
+          children:[
+            { path: "dashboard", element: <Dashboard /> },
+            { path: "dailydetails", element: <Admin /> }, 
+            { path: "addaccount", element: <AddAccount /> },
+          ]
         },
         {
           path: "receptionist",
