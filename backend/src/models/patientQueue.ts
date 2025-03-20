@@ -2,7 +2,7 @@ import { Schema, model } from "mongoose";
 
 const schema = new Schema(
   {
-    patient_id: { type: Schema.Types.ObjectId, ref: "Patient", required: true },
+    patient_id: { type: Schema.Types.ObjectId, ref: "User", required: true },
     status: { type: Boolean, required: true, default: false },
     prescription_id: {
       type: Schema.Types.ObjectId,
