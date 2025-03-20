@@ -91,7 +91,11 @@ export default function Prescribe() {
   const [isPharmacyMedicationOpen, setIsPharmacyMedicationOpen] =
     useState(false);
   const { prescription } = useContext(prescriptionContext);
-  console.log(prescription);
+  console.log(
+    "mai hu prescribe page mai now see the data jo queue sai aya ",
+    prescription,
+  );
+
   return (
     <Access text={["doctor"]}>
       <div className="p-6 bg-zinc-100 ">

@@ -146,7 +146,6 @@ export interface dataPass {
   pregnant?: boolean;
 }
 
-
 export interface opdPageInterface {
   _id?: string;
   name: string;
@@ -172,5 +171,3 @@ export interface opdPageInterface {
   glucose?: string;
   pregnant?: boolean;
 }
-
-  
