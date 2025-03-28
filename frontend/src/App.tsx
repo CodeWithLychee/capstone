@@ -9,7 +9,6 @@ import Admin from "./pages/admin/Admin.tsx";
 import AddAccount from "./pages/admin/AddAccount.tsx";
 import Opd from "./pages/receptionist/Opd.tsx";
 import Dashboard from "./pages/common/Dashboard.tsx";
-import DoctorPatientQueue from "./pages/doctor/DoctorPatientQueue.tsx";
 
 const App = () => {
   const router = createBrowserRouter([
@@ -45,7 +44,8 @@ const App = () => {
           path: "doctor",
           children: [
             { path: "dashboard", element: <Dashboard /> },
-            { path: "patientqueue", element: <DoctorPatientQueue /> },
+
+            { path: "patientqueue", element: <OpdLog /> },
             { path: "prescribe", element: <Prescribe /> },
           ],
         },

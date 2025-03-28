@@ -13,7 +13,7 @@ export interface Patient {
 }
 
 export interface PatientQueue {
-  _id?: string;
+  _id: string;
   user_id: string;
   status: boolean;
   patient_id: {

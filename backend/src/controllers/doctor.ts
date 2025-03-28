@@ -1,35 +1,11 @@
 import { Request, Response } from "express";
 import patientQueue from "../models/patientQueue.js";
 import prescription from "../models/prescription.js";
-import user from "../models/user.js";
-import medicine from "../models/medicine.js";
-
-export const getPatientQueue = async (req: Request, res: Response) => {
-  try {
-    const queue = await patientQueue
-      .find({ status: false })
-      .populate("patient_id")
-      .populate("prescription_id")
-      .sort({ createdAt: 1 });
-
-    res.status(200).json({
-      success: true,
-      data: queue,
-    });
-  } catch (error) {
-    console.error("Error fetching patient queue:", error);
-    res.status(500).json({
-      success: false,
-      message: "Internal Server Error",
-    });
-  }
-};
 
 export const createPrescription = async (_req: Request, res: Response) => {
   try {
-    // Step 1: Extract data from request body
     const {
-      patient_id,
+      prescription_id,
       doctor_id,
       paramedic_notes = "",
       vitals = {},
@@ -40,51 +16,49 @@ export const createPrescription = async (_req: Request, res: Response) => {
       follow_up_date,
     } = _req.body;
 
-    console.log("Controller reached: Creating prescription");
+    console.log("Request body:", _req.body);
 
-    // Step 2: Create a new prescription object
-    const newPrescription = new prescription({
-      patient_id,
-      doctor_id,
-      paramedic_notes,
-      vitals: {
-        bp: vitals?.bp || "",
-        spo2: vitals?.spo2 || "",
-        temperature: vitals?.temperature || "",
-        heart_rate: vitals?.heart_rate || "",
-        bmi: vitals?.bmi || "",
-        glucose: vitals?.glucose || "",
-        respiratory_rate: vitals?.respiratory_rate || "",
-        pregnant: vitals?.pregnant || false,
+    await prescription.findOneAndUpdate(
+      {
+        _id: prescription_id,
       },
-      treatment_plan: {
-        history: treatment_plan?.history || "",
-        co: treatment_plan?.co || "",
-        allergy: treatment_plan?.allergy || "",
-        investigation: treatment_plan?.investigation || "",
-        diagnosis: treatment_plan?.diagnosis || "",
-        prognosis: treatment_plan?.prognosis || "",
-        advice: treatment_plan?.advice || "",
-      },
-      medicine: medicine.map((med: any) => ({
-        m_id: med?.m_id || null,
-        quantity: med?.quantity || "",
-        frequency: med?.frequency || "",
-        duration: med?.duration || "",
-        instructions: med?.instructions || "",
-      })),
-      referred_outside,
-      rest_recommendation,
-      follow_up_date,
-    });
-
-    // Save the new prescription to the database
-    const savedPrescription = await newPrescription.save();
-
-    // Step 3: Update the PatientQueue model to set status = true
+      {
+        doctor_id,
+        paramedic_notes,
+        vitals: {
+          bp: vitals?.bp || "",
+          spo2: vitals?.spo2 || "",
+          temperature: vitals?.temperature || "",
+          heart_rate: vitals?.heart_rate || "",
+          bmi: vitals?.bmi || "",
+          glucose: vitals?.glucose || "",
+          respiratory_rate: vitals?.respiratory_rate || "",
+          pregnant: vitals?.pregnant || false,
+        },
+        treatment_plan: {
+          history: treatment_plan?.history || "",
+          co: treatment_plan?.co || "",
+          allergy: treatment_plan?.allergy || "",
+          investigation: treatment_plan?.investigation || "",
+          diagnosis: treatment_plan?.diagnosis || "",
+          prognosis: treatment_plan?.prognosis || "",
+          advice: treatment_plan?.advice || "",
+        },
+        medicine: medicine.map((med: any) => ({
+          m_id: med?.m_id || null,
+          quantity: med?.quantity || "",
+          frequency: med?.frequency || "",
+          duration: med?.duration || "",
+          instructions: med?.instructions || "",
+        })),
+        referred_outside,
+        rest_recommendation,
+        follow_up_date,
+      }
+    );
 
     const updatedQueue = await patientQueue.findOneAndUpdate(
-      { patient_id, status: false },
+      { prescription_id: prescription_id, status: false },
       { status: true },
       { new: true }
     );
@@ -96,26 +70,9 @@ export const createPrescription = async (_req: Request, res: Response) => {
       });
     }
 
-    // Step 4: Update the User model by adding the prescription ID to prescriptions array
-    const updatedUser = await user.findByIdAndUpdate(
-      patient_id, // Use the patient's ID directly
-      { $push: { prescription: savedPrescription._id } }, // Push prescription ID to prescriptions array
-      { new: true }
-    );
-
-    if (!updatedUser) {
-      return res.status(404).json({
-        success: false,
-        message: "User not found",
-      });
-    }
-
-    // Respond with success and data
     res.status(201).json({
       success: true,
-      message:
-        "Prescription saved successfully. Patient queue and user updated.",
-      data: { prescription: savedPrescription, updatedQueue, updatedUser },
+      message: "Prescription saved successfully and status set true.",
     });
   } catch (error: any) {
     console.error("Error saving prescription:", error);
@@ -130,30 +87,5 @@ export const createPrescription = async (_req: Request, res: Response) => {
 
 export const searchMedicines = async (_req: Request, res: Response) => {
   try {
-    const { query } = _req.query;
-
-    if (!query || typeof query !== "string") {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid search query",
-      });
-    }
-
-    const medicines = await medicine
-      .find({
-        name: { $regex: `^${query}`, $options: "i" },
-      })
-      .limit(10);
-
-    res.status(200).json({
-      success: true,
-      data: medicines,
-    });
-  } catch (error) {
-    console.error("Error searching for medicines:", error);
-    res.status(500).json({
-      success: false,
-      message: "Server error, could not search medicines",
-    });
-  }
+  } catch (error) {}
 };
