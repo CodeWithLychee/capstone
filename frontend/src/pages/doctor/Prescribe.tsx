@@ -5,8 +5,7 @@ import { Textarea } from "@/components/ui/textarea";
 import Button from "@/components/Button";
 import Access from "../common/access";
 import { useContext, ChangeEvent } from "react";
-import { toast } from "react-toastify";
-
+import { toast, ToastContainer } from "react-toastify";
 import {
   Collapsible,
   CollapsibleContent,
@@ -24,6 +23,7 @@ import { ChevronDown } from "lucide-react";
 import { prescriptionContext } from "@/store/prescriptionContext";
 import { dataPass } from "@/lib/types.ts";
 import { api } from "@/lib/utils";
+import { useNavigate } from "react-router-dom";
 
 const vitals: Array<{
   id: string;
@@ -122,6 +122,7 @@ type InputValue = {
 };
 
 export default function Prescribe() {
+  const navigate = useNavigate();
   const [isVitalsOpen, setIsVitalsOpen] = useState(false);
   const [isPrescriptionOpen, setIsPrescriptionOpen] = useState(false);
   const [isPharmacyMedicationOpen, setIsPharmacyMedicationOpen] =
@@ -175,13 +176,14 @@ export default function Prescribe() {
         rest_recommendation: inputValue.rest_recommendation,
         follow_up_date: inputValue.follow_up_date,
       });
+      console.log("API Response: ", response);
+      toast.success(response.data.message);
 
-      if (response.status == 200) {
-        toast.success(response.data.message);
-      } else {
-        toast.error(response.data.message);
-      }
+      setTimeout(() => {
+        navigate("/app/doctor/patientqueue");
+      }, 6000);
     } catch (error) {
+      toast.error("Error while saving prescription details.");
       console.error(error);
     }
   }
@@ -253,6 +255,7 @@ export default function Prescribe() {
 
   return (
     <Access text={["doctor"]}>
+      <ToastContainer />
       <div className="p-6 bg-zinc-100 ">
         <h1 className="text-4xl font-semibold mb-6 pl-5">
           Patient Prescription
