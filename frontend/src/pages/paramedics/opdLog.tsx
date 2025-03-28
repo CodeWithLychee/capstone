@@ -6,20 +6,31 @@ import { PatientQueue, dataPass } from "@/lib/types.ts";
 import { useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import { prescriptionContext } from "../../store/prescriptionContext.ts";
+import { userContext } from "@/store/userContext.ts";
 
 export default function OpdLog() {
   const [patients, setPatients] = useState<PatientQueue[]>([]);
   const navigate = useNavigate();
+  const { user } = useContext(userContext);
+
   const { setPrescription } = useContext(prescriptionContext);
   function handle(data: dataPass) {
     setPrescription(data);
-    console.log(data);
+    console.log("data is here", data);
     navigate("/app/doctor/prescribe");
   }
+
   useEffect(() => {
     const fetchPatients = async () => {
       const response = await api.get("/user/getOpdLog/?status=false");
-      const data = await response.data;
+      let data = await response.data;
+      console.log("1");
+      console.log(data);
+      if (user.role === "doctor")
+        data = data.filter((x: PatientQueue) => {
+          return !x.status;
+        });
+      console.log("2");
       setPatients(data);
     };
     const interval = setInterval(fetchPatients, 2000);
@@ -81,7 +92,11 @@ export default function OpdLog() {
                     <td
                       className="px-6 py-4 text-sm"
                       onClick={() =>
-                        handle({...patient.patient_id,...patient.prescription_id.vitals})
+                        handle({
+                          ...patient.patient_id,
+                          _id: patient.prescription_id._id,
+                          ...patient.prescription_id.vitals,
+                        })
                       }
                     >
                       <Button>View</Button>

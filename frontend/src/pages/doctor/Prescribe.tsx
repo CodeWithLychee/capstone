@@ -45,7 +45,7 @@ const vitals: Array<{
     placeholder: "Enter Temperature",
   },
   {
-    id: "heartRate",
+    id: "heart_rate",
     label: "Heart Rate",
     name: "heart_rate",
     placeholder: "Enter Heart Rate",
@@ -58,7 +58,7 @@ const vitals: Array<{
     placeholder: "Enter Glucose",
   },
   {
-    id: "respiratoryRate",
+    id: "respiratory_rate",
     label: "Respiratory Rate",
     name: "respiratory_rate",
     placeholder: "Enter Respiratory Rate",
@@ -86,6 +86,7 @@ const prescriptionFields = [
     placeholder: "Enter advice",
   },
 ];
+
 type Medicine = {
   m_id: string;
   frequency: string;
@@ -125,19 +126,20 @@ export default function Prescribe() {
   const [isPrescriptionOpen, setIsPrescriptionOpen] = useState(false);
   const [isPharmacyMedicationOpen, setIsPharmacyMedicationOpen] =
     useState(false);
+
   const { prescription } = useContext(prescriptionContext);
 
   const [inputValue, setInputValue] = useState<InputValue>({
     paramedic_notes: "",
     vitals: {
-      bp: "",
-      spo2: "",
-      temperature: "",
-      heart_rate: "",
-      bmi: "",
-      glucose: "",
-      respiratory_rate: "",
-      pregnant: false,
+      bp: prescription.bp || "",
+      spo2: prescription.spo2 || "",
+      temperature: prescription.temperature || "",
+      heart_rate: prescription.heart_rate || "",
+      pregnant: prescription.pregnant || false,
+      bmi: prescription.bmi || "",
+      glucose: prescription.glucose || "",
+      respiratory_rate: prescription.respiratory_rate || "",
     },
     treatment_plan: {
       history: "",
@@ -148,18 +150,22 @@ export default function Prescribe() {
       prognosis: "",
       advice: "",
     },
-    medicine: [], // Start with an empty array
+    medicine: [],
     referred_outside: false,
     rest_recommendation: "",
     follow_up_date: "",
   });
 
-  async function handle(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
+  console.log("Initial input Values : ", inputValue);
+  console.log("Prescription : ", prescription);
+  console.log("Prescription ID : ", prescription._id);
 
+  async function submitPrescriptionForm(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    console.log("After Final Input Values : ", inputValue);
     try {
       const response = await api.post("/doctor/prescription", {
-        patient_id: prescription._id,
+        prescription_id: prescription._id,
         doctor_id: "67d6a54f84ae5b5080fd855a",
         paramedic_notes: inputValue.paramedic_notes,
         vitals: inputValue.vitals,
@@ -179,6 +185,18 @@ export default function Prescribe() {
       console.error(error);
     }
   }
+
+  const handleVitalChanges = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { id, value } = e.target;
+
+    setInputValue((prev) => ({
+      ...prev,
+      vitals: {
+        ...prev.vitals,
+        [id]: value,
+      },
+    }));
+  };
 
   async function handleChange(
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -215,7 +233,8 @@ export default function Prescribe() {
     });
   }
 
-  function addMedicine() {
+  const addMedicineButton = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
     setInputValue((prevState) => ({
       ...prevState,
       medicine: [
@@ -223,9 +242,9 @@ export default function Prescribe() {
         { m_id: "", frequency: "", duration: "", instructions: "" },
       ],
     }));
-  }
+  };
 
-  function removeMedicine(index: number) {
+  function removeMedicineButton(index: number) {
     setInputValue((prevState) => ({
       ...prevState,
       medicine: prevState.medicine.filter((_, i) => i !== index),
@@ -239,7 +258,10 @@ export default function Prescribe() {
           Patient Prescription
         </h1>
         <div className="space-y-6 bg-white p-8 rounded-2xl">
-          <form className="space-y-6 max-w-7xl mx-auto " onSubmit={handle}>
+          <form
+            className="space-y-6 max-w-7xl mx-auto "
+            onSubmit={submitPrescriptionForm}
+          >
             <div className="space-y-4">
               <h2 className="text-lg font-semibold">Patient Details</h2>
               <div className="grid grid-cols-2 gap-4 bg-gray-50 p-4 rounded-lg">
@@ -302,19 +324,8 @@ export default function Prescribe() {
                       <Input
                         id={id}
                         placeholder={placeholder}
-                        name={`vitals.${name}`} // For nested object keys like vitals.bp
-                        value={(inputValue.vitals as any)[name]} // Access nested state values dynamically
-                        onChange={(e) => {
-                          const { name, value } = e.target;
-                          const key = name.split(".")[1]; // Extract nested key (e.g., bp)
-                          setInputValue((prevState) => ({
-                            ...prevState,
-                            vitals: {
-                              ...prevState.vitals,
-                              [key]: value,
-                            },
-                          }));
-                        }}
+                        defaultValue={String(prescription?.[name] ?? "")}
+                        onChange={handleVitalChanges}
                       />
                     </div>
                   ))}
@@ -352,7 +363,6 @@ export default function Prescribe() {
                           setInputValue((prevState) => ({
                             ...prevState,
                             treatment_plan: {
-                              // Corrected here
                               ...prevState.treatment_plan,
                               [key]: value,
                             },
@@ -430,7 +440,7 @@ export default function Prescribe() {
                           />
                         </TableCell>
                         <TableCell>
-                          <button onClick={() => removeMedicine(index)}>
+                          <button onClick={() => removeMedicineButton(index)}>
                             Remove
                           </button>
                         </TableCell>
@@ -441,7 +451,7 @@ export default function Prescribe() {
                       <TableCell colSpan={6}>
                         <div className="w-full h-full flex justify-center items-center">
                           <button
-                            onClick={addMedicine}
+                            onClick={addMedicineButton}
                             className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-md shadow-md transition-all duration-300 "
                           >
                             Add Medicine
