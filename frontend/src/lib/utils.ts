@@ -22,3 +22,18 @@ export const api = axios.create({
     "Content-Type": "application/json",
   },
 });
+
+function isExpired(date: Date): boolean {
+  const now = new Date();
+  return date < now;
+}
+
+function isExpiringSoon(date: Date): boolean {
+  const now = new Date();
+  const sixMonthsFromNow = new Date();
+  sixMonthsFromNow.setMonth(now.getMonth() + 6);
+
+  return date <= sixMonthsFromNow;
+}
+
+export { isExpired, isExpiringSoon };

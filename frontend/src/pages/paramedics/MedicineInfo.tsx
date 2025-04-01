@@ -2,6 +2,7 @@ import Button from "@/components/Button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { isExpired, isExpiringSoon } from "@/lib/utils";
 import {
   ArrowLeft,
   Barcode,
@@ -46,6 +47,7 @@ export default function MedicineDetails() {
   const [formData, setFormData] = useState<MedicineFormData>(initialFormData);
   const location = useLocation();
   const { state } = location;
+  console.log(state);
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -135,7 +137,9 @@ export default function MedicineDetails() {
             <div
               className={`flex items-center gap-2 mt-2 ${
                 isExpiringSoon(state.expiry_date) &&
-                "text-red-600 font-semibold"
+                "text-yellow-600 font-semibold"
+              } ${
+                isExpired(state.expiry_date) && "text-red-600 font-semibold"
               }`}
             >
               <div className="rounded-full overflow-hidden">
@@ -266,12 +270,4 @@ export default function MedicineDetails() {
       </Card>
     </div>
   );
-}
-
-function isExpiringSoon(date: Date): boolean {
-  const now = new Date();
-  const sixMonthsFromNow = new Date();
-  sixMonthsFromNow.setMonth(now.getMonth() + 6);
-
-  return date <= sixMonthsFromNow;
 }
