@@ -30,6 +30,7 @@ export default function OpdLog({ status }: Props) {
       let data: any = await response.data;
       setPatients(data);
     };
+    fetchPatients();
     const interval = setInterval(fetchPatients, 2000);
     return () => clearInterval(interval);
   }, []);
