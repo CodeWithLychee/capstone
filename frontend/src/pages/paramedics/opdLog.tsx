@@ -8,7 +8,11 @@ import { useContext } from "react";
 import { prescriptionContext } from "../../store/prescriptionContext.ts";
 import { userContext } from "@/store/userContext.ts";
 
-export default function OpdLog() {
+interface Props {
+  status: "true" | "false";
+}
+
+export default function OpdLog({ status }: Props) {
   const [patients, setPatients] = useState<PatientQueue[]>([]);
   const navigate = useNavigate();
   const { user } = useContext(userContext);
@@ -22,20 +26,14 @@ export default function OpdLog() {
 
   useEffect(() => {
     const fetchPatients = async () => {
-      const response = await api.get("/user/getOpdLog/?status=false");
-      let data = await response.data;
-      console.log("1");
-      console.log(data);
-      if (user.role === "doctor")
-        data = data.filter((x: PatientQueue) => {
-          return !x.status;
-        });
-      console.log("2");
+      const response = await api.get(`/user/getOpdLog/?status=${status}`);
+      let data: any = await response.data;
       setPatients(data);
     };
     const interval = setInterval(fetchPatients, 2000);
     return () => clearInterval(interval);
   }, []);
+
   return (
     <Access text={["doctor", "receptionist", "paramedic"]}>
       <div className="p-6 bg-zinc-100 h-full">
@@ -73,7 +71,7 @@ export default function OpdLog() {
               <tbody className="divide-y">
                 {patients.map((patient, i) => (
                   <tr key={patient._id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 text-sm text-gray-500">{i}</td>
+                    <td className="px-6 py-4 text-sm text-gray-900">{i + 1}</td>
                     <td className="px-6 py-4 text-sm text-gray-900">
                       {patient.patient_id.name}
                     </td>
@@ -89,18 +87,33 @@ export default function OpdLog() {
                     <td className="px-6 py-4 text-sm text-gray-900">
                       {patient.prescription_id.doctor_id}
                     </td>
-                    <td
-                      className="px-6 py-4 text-sm"
-                      onClick={() =>
-                        handle({
-                          ...patient.patient_id,
-                          _id: patient.prescription_id._id,
-                          ...patient.prescription_id.vitals,
-                        })
-                      }
-                    >
-                      <Button>View</Button>
-                    </td>
+                    {user.role == "paramedic" ? (
+                      <td className="px-6 py-4 text-sm">
+                        <Button
+                          onClick={() =>
+                            navigate("/app/paramedic/dispatch-medicine", {
+                              state: patient,
+                            })
+                          }
+                        >
+                          View
+                        </Button>
+                      </td>
+                    ) : (
+                      <td className="px-6 py-4 text-sm">
+                        <Button
+                          onClick={() =>
+                            handle({
+                              ...patient.patient_id,
+                              _id: patient.prescription_id._id,
+                              ...patient.prescription_id.vitals,
+                            })
+                          }
+                        >
+                          View
+                        </Button>
+                      </td>
+                    )}
                   </tr>
                 ))}
               </tbody>

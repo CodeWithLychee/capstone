@@ -1,180 +1,106 @@
-import { useState } from "react";
 import Button from "@/components/Button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import Access from "../common/access";
+import { api } from "@/lib/utils";
+import moment from "moment";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 interface MedicineFormData {
+  _id: string;
   name: string;
-  brand: string;
-  type: string;
-  expiryDate: string;
-  mrp: string;
-  potency: string;
-  stock: string;
-  batchNumber: string;
-  manufacturingDate: string;
+  company: string;
+  expiry_date: string;
+  price: string;
+  quantity: string;
+  desciption: string;
+  batch_no: string;
+  mfg_date: string;
 }
 
-const initialFormData: MedicineFormData = {
-  name: "",
-  brand: "",
-  type: "",
-  expiryDate: "",
-  mrp: "",
-  potency: "",
-  stock: "",
-  batchNumber: "",
-  manufacturingDate: "",
-};
+export default function Inventory() {
+  const navigate = useNavigate();
+  const [medicines, setMedicines] = useState<MedicineFormData[]>([]);
 
-export function InventoryForm() {
-  const [formData, setFormData] = useState<MedicineFormData>(initialFormData);
+  useEffect(() => {
+    const fetchMedicines = async () => {
+      try {
+        const res = await api.get("/paramedic/inventory");
+        const data: any = res.data;
+        setMedicines(data);
+      } catch (error) {
+        console.error("Error fetching medicines:", error);
+      }
+    };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
+    fetchMedicines();
+  }, []);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("Form submitted:", formData);
-    // Add your form submission logic here
-  };
-
-  const handleClear = () => {
-    setFormData(initialFormData);
-  };
   return (
-    <Access text={["paramedic"]}>
-      <div className="p-6 bg-zinc-100 h-full">
-        <h1 className="text-4xl font-semibold mb-6 pl-5">
-          Patient Prescription
-        </h1>
-        <div className="bg-white rounded-lg shadow-sm p-6">
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-xl font-semibold">Add Medicines</h2>
-            <div className="flex gap-2 text-sm">
-              <span className="text-gray-600">Clinic</span>
-              <span className="text-gray-400">|</span>
-              <span className="text-gray-600">Pharmacy</span>
-            </div>
-          </div>
-
-          <form onSubmit={handleSubmit}>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-4">
-                <div>
-                  <Label htmlFor="name">Name</Label>
-                  <Input
-                    id="name"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleChange}
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="brand">Brand</Label>
-                  <Input
-                    id="brand"
-                    name="brand"
-                    value={formData.brand}
-                    onChange={handleChange}
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="type">Type</Label>
-                  <Input
-                    id="type"
-                    name="type"
-                    value={formData.type}
-                    onChange={handleChange}
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="expiryDate">Expiry Date</Label>
-                  <Input
-                    id="expiryDate"
-                    name="expiryDate"
-                    type="date"
-                    value={formData.expiryDate}
-                    onChange={handleChange}
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="mrp">MRP</Label>
-                  <Input
-                    id="mrp"
-                    name="mrp"
-                    type="number"
-                    value={formData.mrp}
-                    onChange={handleChange}
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-4">
-                <div>
-                  <Label htmlFor="potency">Potency</Label>
-                  <Input
-                    id="potency"
-                    name="potency"
-                    value={formData.potency}
-                    onChange={handleChange}
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="stock">Stock</Label>
-                  <Input
-                    id="stock"
-                    name="stock"
-                    type="number"
-                    value={formData.stock}
-                    onChange={handleChange}
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="batchNumber">Batch Number</Label>
-                  <Input
-                    id="batchNumber"
-                    name="batchNumber"
-                    value={formData.batchNumber}
-                    onChange={handleChange}
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="manufacturingDate">Manufacturing Date</Label>
-                  <Input
-                    id="manufacturingDate"
-                    name="manufacturingDate"
-                    type="date"
-                    value={formData.manufacturingDate}
-                    onChange={handleChange}
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div className="flex justify-end gap-4 mt-8">
-              <div onClick={handleClear}>
-                <Button>Clear</Button>
-              </div>
-
-              <Button>Save Details</Button>
-            </div>
-          </form>
+    <div className="p-6 bg-zinc-100 h-full">
+      <h1 className="text-4xl font-semibold mb-6 pl-5">Inventory</h1>
+      <div className="bg-white rounded-lg shadow">
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead>
+              <tr className="bg-gray-50 border-b">
+                <th className="px-6 py-3 text-left text-sm font-medium text-gray-500">
+                  Sr No.
+                </th>
+                <th className="px-6 py-3 text-left text-sm font-medium text-gray-500">
+                  Name
+                </th>
+                <th className="px-6 py-3 text-left text-sm font-medium text-gray-500">
+                  Batch No.
+                </th>
+                <th className="px-6 py-3 text-left text-sm font-medium text-gray-500">
+                  Stock
+                </th>
+                <th className="px-6 py-3 text-left text-sm font-medium text-gray-500">
+                  Price (Rs.)
+                </th>
+                <th className="px-6 py-3 text-left text-sm font-medium text-gray-500">
+                  Expiry Date
+                </th>
+                <th className="px-6 py-3 text-left text-sm font-medium text-gray-500">
+                  Action
+                </th>
+              </tr>
+            </thead>
+            <tbody className="divide-y">
+              {medicines.map((medicine, i) => (
+                <tr key={medicine._id} className="hover:bg-gray-50">
+                  <td className="px-6 py-4 text-sm text-gray-500">{i + 1}</td>
+                  <td className="px-6 py-4 text-sm text-gray-900">
+                    {medicine.name}
+                  </td>
+                  <td className="px-6 py-4 text-sm text-gray-900">
+                    {medicine.batch_no}
+                  </td>
+                  <td className="px-6 py-4 text-sm text-gray-900">
+                    {medicine.quantity}
+                  </td>
+                  <td className="px-6 py-4 text-sm text-gray-900">
+                    {medicine.price}
+                  </td>
+                  <td className="px-6 py-4 text-sm text-gray-900">
+                    {moment(medicine.expiry_date).format("DD-MM-YYYY")}
+                  </td>
+                  <td className="px-6 py-4 text-sm">
+                    <Button
+                      onClick={() =>
+                        navigate("/app/paramedic/medicine-info", {
+                          state: medicine,
+                        })
+                      }
+                    >
+                      View
+                    </Button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
-      </div>{" "}
-    </Access>
+      </div>
+    </div>
   );
 }
