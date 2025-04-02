@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
-import patientQueue from "../models/patientQueue.js";
 import prescription from "../models/prescription.js";
+import medicine from "../models/medicine.js";
+import patientQueue from "../models/patientQueue.js";
 
 export const createPrescription = async (_req: Request, res: Response) => {
   try {
@@ -44,13 +45,15 @@ export const createPrescription = async (_req: Request, res: Response) => {
           prognosis: treatment_plan?.prognosis || "",
           advice: treatment_plan?.advice || "",
         },
-        medicine: medicine.map((med: any) => ({
-          m_id: med?.m_id || null,
-          quantity: med?.quantity || "",
-          frequency: med?.frequency || "",
-          duration: med?.duration || "",
-          instructions: med?.instructions || "",
-        })),
+        medicine: Array.isArray(medicine)
+          ? medicine.map((med) => ({
+              medicine_id: med.m_id || null,
+              medicine_name: med.name,
+              frequency: med.frequency || "",
+              duration: med.duration || "",
+              instructions: med.instructions || "",
+            }))
+          : [],
         referred_outside,
         rest_recommendation,
         follow_up_date,
@@ -85,7 +88,19 @@ export const createPrescription = async (_req: Request, res: Response) => {
   }
 };
 
-export const searchMedicines = async (_req: Request, res: Response) => {
+export const searchMedicine = async (req: Request, res: Response) => {
   try {
-  } catch (error) {}
+    console.log("hello ji search karlo");
+
+    const { query } = req.body;
+
+    const medicines = await medicine
+      .find({ name: { $regex: `^${query}`, $options: "i" } })
+      .select("name _id");
+
+    res.status(200).json({ success: true, medicines });
+  } catch (error) {
+    console.error("Error searching medicine:", error);
+    res.status(500).json({ success: false, message: "Server error", error });
+  }
 };

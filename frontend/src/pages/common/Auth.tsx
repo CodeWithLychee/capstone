@@ -125,6 +125,7 @@ export function Auth() {
 // import { userContext } from "@/store/userContext";
 // import { ToastContainer, toast } from "react-toastify";
 // import { api } from "../../lib/utils";
+// import { error } from "console";
 
 // interface SignupFormData {
 //   name: string;
@@ -196,7 +197,7 @@ export function Auth() {
 //       console.log("Signup Successful:", response.data);
 //       toast.success("Account created successfully! Please log in.");
 //       setIsSignup(false);
-//     } catch (error) {
+//     } catch (error: any) {
 //       toast.error(error.response?.data?.message || "Signup failed");
 //     }
 //   };
@@ -206,10 +207,10 @@ export function Auth() {
 //     try {
 //       const response = await api.post("/user/login", loginData);
 //       console.log("Login Successful:", response.data);
-//       dispatch({ type: "LOGIN", payload: response.data });
+//       // dispatch({ type: "LOGIN", payload: response.data });
 //       navigate("/"); // Navigate to the home page after login
 //       toast.success("Logged in successfully!");
-//     } catch (error) {
+//     } catch (error: any) {
 //       toast.error(error.response?.data?.message || "Login failed");
 //     }
 //   };

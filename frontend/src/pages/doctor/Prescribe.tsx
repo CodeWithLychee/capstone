@@ -87,14 +87,15 @@ const prescriptionFields = [
   },
 ];
 
-type Medicine = {
-  m_id: string;
+interface Medicine {
+  m_id: string; //fill when we get _id of the medicine from backend
+  name: string;
   frequency: string;
   duration: string;
   instructions: string;
-};
+}
 
-type InputValue = {
+interface InputValue {
   paramedic_notes: string;
   vitals: {
     bp: string;
@@ -119,7 +120,7 @@ type InputValue = {
   referred_outside?: boolean;
   rest_recommendation?: string;
   follow_up_date?: string;
-};
+}
 
 export default function Prescribe() {
   const navigate = useNavigate();
@@ -151,7 +152,15 @@ export default function Prescribe() {
       prognosis: "",
       advice: "",
     },
-    medicine: [],
+    medicine: [
+      {
+        m_id: "",
+        name: "",
+        frequency: "",
+        duration: "",
+        instructions: "",
+      },
+    ],
     referred_outside: false,
     rest_recommendation: "",
     follow_up_date: "",
@@ -220,39 +229,63 @@ export default function Prescribe() {
     }
   }
 
-  function handleMedicineChange(
-    e: ChangeEvent<HTMLInputElement>,
+  const handleMedicineChange = (
     index: number,
-  ) {
-    const { name, value } = e.target;
-    setInputValue((prevState) => {
-      const updatedMedicines = [...prevState.medicine];
-      updatedMedicines[index] = {
-        ...updatedMedicines[index],
-        [name]: value,
-      };
-      return { ...prevState, medicine: updatedMedicines };
-    });
-  }
+    field: keyof Medicine,
+    value: string,
+  ) => {
+    const updatedMedicine = [...inputValue.medicine];
+    updatedMedicine[index][field] = value;
+    setInputValue((prev) => ({ ...prev, medicine: updatedMedicine }));
+  };
 
-  const addMedicineButton = (event: React.MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault();
-    setInputValue((prevState) => ({
-      ...prevState,
+  const addMedicine = () => {
+    setInputValue((prev) => ({
+      ...prev,
       medicine: [
-        ...prevState.medicine,
-        { m_id: "", frequency: "", duration: "", instructions: "" },
+        ...prev.medicine,
+        { m_id: "", name: "", frequency: "", duration: "", instructions: "" },
       ],
     }));
   };
 
-  function removeMedicineButton(index: number) {
-    setInputValue((prevState) => ({
-      ...prevState,
-      medicine: prevState.medicine.filter((_, i) => i !== index),
+  const removeMedicine = (index: number) => {
+    setInputValue((prev) => ({
+      ...prev,
+      medicine: prev.medicine.filter((_, i) => i !== index),
     }));
-  }
+  };
 
+  const [searchResults, setSearchResults] = useState<
+    Record<number, { name: string; _id: string }[]>
+  >({});
+
+  const [_searchQuery, setSearchQuery] = useState("");
+
+  const handleSearch = async (index: number, query: string) => {
+    setSearchQuery(query);
+    handleMedicineChange(index, "name", query);
+
+    if (!query.trim()) {
+      setSearchResults((prev) => ({ ...prev, [index]: [] })); // Clear results for this input only
+      return;
+    }
+
+    try {
+      const { data } = await api.post("/doctor/search", { query });
+      setSearchResults((prev) => ({ ...prev, [index]: data.medicines })); // Store per input field
+    } catch (error) {
+      console.error("Error searching medicine:", error);
+    }
+  };
+  const handleSelectMedicine = (
+    index: number,
+    medicine: { name: string; _id: string },
+  ) => {
+    handleMedicineChange(index, "name", medicine.name);
+    handleMedicineChange(index, "m_id", medicine._id);
+    setSearchResults((prev) => ({ ...prev, [index]: [] })); // Clear results for this specific input
+  };
   return (
     <Access text={["doctor"]}>
       <ToastContainer />
@@ -408,54 +441,104 @@ export default function Prescribe() {
                   </TableHeader>
                   <TableBody>
                     {inputValue.medicine.map((med, index) => (
-                      <TableRow key={index}>
-                        <TableCell>{index + 1}.</TableCell>
-                        <TableCell>
-                          <Input
+                      <tr key={index} className="border">
+                        <td className="border p-2">{index + 1}.</td>
+                        <td className="border p-2 relative">
+                          <input
+                            type="text"
+                            value={med.name}
+                            onChange={(e) =>
+                              handleSearch(index, e.target.value)
+                            }
                             placeholder="Enter medicine"
-                            name="m_id"
-                            value={med.m_id || ""}
-                            onChange={(e) => handleMedicineChange(e, index)}
+                            className="border rounded px-2 py-1 w-full"
                           />
-                        </TableCell>
-                        <TableCell>
-                          <Input
+
+                          {searchResults[index]?.length > 0 && (
+                            <div>
+                              <ul className="absolute z-10 bg-white border mt-1 rounded shadow-lg w-full">
+                                {searchResults[index].map((medicine) => (
+                                  <li
+                                    key={medicine._id}
+                                    onClick={() =>
+                                      handleSelectMedicine(index, medicine)
+                                    }
+                                    className="p-2 cursor-pointer hover:bg-gray-200"
+                                  >
+                                    {medicine.name}
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
+                        </td>
+                        <td className="border p-2">
+                          <input
+                            type="text"
+                            value={med.frequency}
+                            onChange={(e) =>
+                              handleMedicineChange(
+                                index,
+                                "frequency",
+                                e.target.value,
+                              )
+                            }
                             placeholder="Enter frequency"
-                            name="frequency"
-                            value={med.frequency || ""}
-                            onChange={(e) => handleMedicineChange(e, index)}
+                            className="border rounded px-2 py-1 w-full"
                           />
-                        </TableCell>
-                        <TableCell>
-                          <Input
+                        </td>
+                        <td className="border p-2">
+                          <input
+                            type="text"
+                            value={med.duration}
+                            onChange={(e) =>
+                              handleMedicineChange(
+                                index,
+                                "duration",
+                                e.target.value,
+                              )
+                            }
                             placeholder="Enter duration"
-                            name="duration"
-                            value={med.duration || ""}
-                            onChange={(e) => handleMedicineChange(e, index)}
+                            className="border rounded px-2 py-1 w-full"
                           />
-                        </TableCell>
-                        <TableCell>
-                          <Input
+                        </td>
+                        <td className="border p-2">
+                          <input
+                            type="text"
+                            value={med.instructions}
+                            onChange={(e) =>
+                              handleMedicineChange(
+                                index,
+                                "instructions",
+                                e.target.value,
+                              )
+                            }
                             placeholder="Enter instructions"
-                            name="instructions"
-                            value={med.instructions || ""}
-                            onChange={(e) => handleMedicineChange(e, index)}
+                            className="border rounded px-2 py-1 w-full"
                           />
-                        </TableCell>
-                        <TableCell>
-                          <button onClick={() => removeMedicineButton(index)}>
+                        </td>
+                        <td className="border p-2 text-center">
+                          <button
+                            onClick={(e) => {
+                              e.preventDefault();
+                              removeMedicine(index);
+                            }}
+                            type="button"
+                            className="text-red-500 hover:underline"
+                          >
                             Remove
                           </button>
-                        </TableCell>
-                      </TableRow>
+                        </td>
+                      </tr>
                     ))}
                     {/* Add Medicine Button */}
                     <TableRow>
                       <TableCell colSpan={6}>
                         <div className="w-full h-full flex justify-center items-center">
                           <button
-                            onClick={addMedicineButton}
+                            type="button"
                             className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-md shadow-md transition-all duration-300 "
+                            onClick={addMedicine}
                           >
                             Add Medicine
                           </button>
