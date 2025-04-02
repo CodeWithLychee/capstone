@@ -260,7 +260,7 @@ export default function Prescribe() {
     Record<number, { name: string; _id: string }[]>
   >({});
 
-  const [searchQuery, setSearchQuery] = useState("");
+  const [_searchQuery, setSearchQuery] = useState("");
 
   const handleSearch = async (index: number, query: string) => {
     setSearchQuery(query);
