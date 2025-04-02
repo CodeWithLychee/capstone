@@ -56,7 +56,7 @@ export function AddMedicine() {
           <form onSubmit={handleSubmit}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-4">
-                <div>
+                {/* <div>
                   <Label htmlFor="name">Name</Label>
                   <Input
                     id="name"
@@ -64,7 +64,7 @@ export function AddMedicine() {
                     value={formData.name}
                     onChange={handleChange}
                   />
-                </div>
+                </div> */}
 
                 <div>
                   <Label htmlFor="batch_no">Batch Number</Label>
