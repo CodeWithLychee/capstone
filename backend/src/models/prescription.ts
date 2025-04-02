@@ -1,4 +1,5 @@
 import { Schema, model } from "mongoose";
+import medicine from "./medicine";
 
 const schema = new Schema(
   {
@@ -30,8 +31,8 @@ const schema = new Schema(
     },
     medicine: [
       {
-        m_id: { type: Schema.Types.ObjectId, ref: "Medicine" },
-        quantity: { type: String, required: true },
+        medicine_id: { type: Schema.Types.ObjectId, ref: "Medicine" },
+        medicine_name: { type: String, required: true },
         frequency: { type: String, required: true },
         duration: { type: String, required: true },
         instructions: { type: String, required: true },

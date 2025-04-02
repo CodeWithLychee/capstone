@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
-import patientQueue from "../models/patientQueue.js";
 import prescription from "../models/prescription.js";
 import medicine from "../models/medicine.js";
+import patientQueue from "../models/patientQueue.js";
 
 export const createPrescription = async (_req: Request, res: Response) => {
   try {
@@ -47,9 +47,8 @@ export const createPrescription = async (_req: Request, res: Response) => {
         },
         medicine: Array.isArray(medicine)
           ? medicine.map((med) => ({
-              m_id: med.m_id || null,
-              // m_id: "",
-              quantity: med.quantity || "",
+              medicine_id: med.m_id || null,
+              medicine_name: med.name,
               frequency: med.frequency || "",
               duration: med.duration || "",
               instructions: med.instructions || "",
@@ -61,18 +60,18 @@ export const createPrescription = async (_req: Request, res: Response) => {
       }
     );
 
-    // const updatedQueue = await patientQueue.findOneAndUpdate(
-    //   { prescription_id: prescription_id, status: false },
-    //   { status: true },
-    //   { new: true }
-    // );
+    const updatedQueue = await patientQueue.findOneAndUpdate(
+      { prescription_id: prescription_id, status: false },
+      { status: true },
+      { new: true }
+    );
 
-    // if (!updatedQueue) {
-    //   return res.status(404).json({
-    //     success: false,
-    //     message: "Patient queue not found or already updated",
-    //   });
-    // }
+    if (!updatedQueue) {
+      return res.status(404).json({
+        success: false,
+        message: "Patient queue not found or already updated",
+      });
+    }
 
     res.status(201).json({
       success: true,
