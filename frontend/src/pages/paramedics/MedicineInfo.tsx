@@ -64,8 +64,8 @@ export default function MedicineDetails() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log("Form submitted:", formData);
-    clearForm();
     // Add your form submission logic here
+    clearForm();
   };
 
   return (
