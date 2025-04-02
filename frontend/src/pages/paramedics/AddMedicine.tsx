@@ -1,32 +1,49 @@
-import { useState } from "react";
 import Button from "@/components/Button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { api } from "@/lib/utils";
+import { useState } from "react";
+import { toast } from "react-toastify";
 import Access from "../common/access";
 
 interface MedicineFormData {
   name: string;
   company: string;
-  expiry_date: string;
+  expiry_date: Date;
   price: string;
   quantity: string;
-  desciption: string;
+  description: string;
   batch_no: string;
-  mfg_date: string;
+  mfg_date: Date;
 }
 
 const initialFormData: MedicineFormData = {
   name: "",
   company: "",
-  expiry_date: "",
+  expiry_date: new Date(),
   price: "",
   quantity: "",
-  desciption: "",
+  description: "",
   batch_no: "",
-  mfg_date: "",
+  mfg_date: new Date(),
 };
 
 export function AddMedicine() {
+  // const [medicines, setMedicines] = useState<MedicineFormData[]>([]);
+  // useEffect(() => {
+  //   const fetchMedicines = async () => {
+  //     try {
+  //       const res = await api.get("/paramedic/inventory");
+  //       const data: any = res.data;
+  //       setMedicines(data);
+  //     } catch (error) {
+  //       console.error("Error fetching medicines:", error);
+  //     }
+  //   };
+
+  //   fetchMedicines();
+  // }, []);
+
   const [formData, setFormData] = useState<MedicineFormData>(initialFormData);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -34,6 +51,7 @@ export function AddMedicine() {
     setFormData((prev) => ({
       ...prev,
       [name]: value,
+      [name]: name.includes("date") ? new Date(value) : value,
     }));
   };
 
@@ -41,17 +59,22 @@ export function AddMedicine() {
     setFormData(initialFormData);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     console.log("Form submitted:", formData);
-    // Add your form submission logic here
+    const res: any = await api.post("/paramedic/add-medicine", formData);
+    res.data.success
+      ? toast.success(res.data.message)
+      : toast.error(res.data.message);
     clearForm();
   };
 
   return (
     <Access text={["paramedic"]}>
       <div className="p-6 bg-zinc-100 h-full">
-        <h1 className="text-4xl font-semibold mb-6 pl-5">Add Medicine</h1>
+        <h1 className="text-4xl font-semibold mb-6 pl-5">
+          Add / Update Medicine
+        </h1>
         <div className="bg-white rounded-lg shadow-sm p-6">
           <form onSubmit={handleSubmit}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -61,6 +84,7 @@ export function AddMedicine() {
                   <Input
                     id="name"
                     name="name"
+                    required
                     value={formData.name}
                     onChange={handleChange}
                   />
@@ -71,6 +95,7 @@ export function AddMedicine() {
                   <Input
                     id="batch_no"
                     name="batch_no"
+                    required
                     value={formData.batch_no}
                     onChange={handleChange}
                   />
@@ -82,6 +107,7 @@ export function AddMedicine() {
                     id="price"
                     name="price"
                     type="number"
+                    required
                     value={formData.price}
                     onChange={handleChange}
                   />
@@ -93,7 +119,8 @@ export function AddMedicine() {
                     id="expiry_date"
                     name="expiry_date"
                     type="date"
-                    value={formData.expiry_date}
+                    required
+                    value={formData.expiry_date.toISOString().split("T")[0]}
                     onChange={handleChange}
                   />
                 </div>
@@ -105,18 +132,19 @@ export function AddMedicine() {
                   <Input
                     id="company"
                     name="company"
+                    required
                     value={formData.company}
                     onChange={handleChange}
                   />
                 </div>
 
                 <div>
-                  <Label htmlFor="desciption">Desciption</Label>
+                  <Label htmlFor="description">Description</Label>
                   <Input
-                    id="desciption"
-                    name="desciption"
-                    type="number"
-                    value={formData.desciption}
+                    id="description"
+                    name="description"
+                    required
+                    value={formData.description}
                     onChange={handleChange}
                   />
                 </div>
@@ -126,6 +154,8 @@ export function AddMedicine() {
                   <Input
                     id="quantity"
                     name="quantity"
+                    type="number"
+                    required
                     value={formData.quantity}
                     onChange={handleChange}
                   />
@@ -137,7 +167,8 @@ export function AddMedicine() {
                     id="mfg_date"
                     name="mfg_date"
                     type="date"
-                    value={formData.mfg_date}
+                    required
+                    value={formData.mfg_date.toISOString().split("T")[0]}
                     onChange={handleChange}
                   />
                 </div>

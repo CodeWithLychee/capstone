@@ -1,5 +1,5 @@
 import { prescriptionInterface } from "@/lib/types";
-import React, { createContext} from "react";
+import React, { createContext } from "react";
 
 export const userContext = createContext<{
   user: {
@@ -14,28 +14,28 @@ export const userContext = createContext<{
     staffId?: string;
     roll_no?: string;
     hostel?: string;
-    year?: string
+    year?: string;
     room_no?: string;
     department?: string;
-    prescription:prescriptionInterface[] | [];
+    prescription: prescriptionInterface[] | [];
   };
   dispatch: React.Dispatch<
     React.SetStateAction<{
       _id: string;
-    name: string;
-    email?: string;
-    gender: string;
-    role?: string;
-    mobile_no: string;
-    dob?: Date;
-    addr?: string;
-    staffId?: string;
-    roll_no?: string;
-    hostel?: string;
-    year?: string
-    room_no?: string;
-    department?: string;
-    prescription:prescriptionInterface[] | [];
+      name: string;
+      email?: string;
+      gender: string;
+      role?: string;
+      mobile_no: string;
+      dob?: Date;
+      addr?: string;
+      staffId?: string;
+      roll_no?: string;
+      hostel?: string;
+      year?: string;
+      room_no?: string;
+      department?: string;
+      prescription: prescriptionInterface[] | [];
     }>
   >;
 }>({
@@ -54,9 +54,7 @@ export const userContext = createContext<{
     year: "",
     room_no: "",
     department: "",
-    prescription:[],
+    prescription: [],
   },
   dispatch: () => {},
 });
-
-

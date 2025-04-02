@@ -11,7 +11,7 @@ import Opd from "./pages/receptionist/Opd.tsx";
 import Dashboard from "./pages/common/Dashboard.tsx";
 import Inventory from "./pages/paramedics/Inventory.tsx";
 import DispatchMedicine from "./pages/paramedics/DispatchMedicine.tsx";
-import MedicineInfo from "./pages/paramedics/MedicineINfo.tsx";
+import MedicineInfo from "./pages/paramedics/MedicineInfo.tsx";
 
 const App = () => {
   const router = createBrowserRouter([

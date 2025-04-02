@@ -11,7 +11,7 @@ interface MedicineFormData {
   expiry_date: string;
   price: string;
   quantity: string;
-  desciption: string;
+  description: string;
   batch_no: string;
   mfg_date: string;
 }

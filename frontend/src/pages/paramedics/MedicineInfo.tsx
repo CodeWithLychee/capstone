@@ -2,7 +2,7 @@ import Button from "@/components/Button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { isExpired, isExpiringSoon } from "@/lib/utils";
+import { api, isExpired, isExpiringSoon } from "@/lib/utils";
 import {
   ArrowLeft,
   Barcode,
@@ -16,7 +16,8 @@ import {
 } from "lucide-react";
 import moment from "moment";
 import { useEffect, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 interface MedicineFormData {
   name: string;
@@ -24,29 +25,29 @@ interface MedicineFormData {
   expiry_date: string;
   price: string;
   quantity: string;
-  desciption: string;
+  description: string;
   batch_no: string;
   mfg_date: string;
 }
 
-const initialFormData: MedicineFormData = {
-  name: "",
-  company: "",
-  expiry_date: "",
-  price: "",
-  quantity: "",
-  desciption: "",
-  batch_no: "",
-  mfg_date: "",
-};
-
 export default function MedicineDetails() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { state } = location;
+  const initialFormData: MedicineFormData = {
+    name: state.name,
+    company: state.company,
+    expiry_date: state.expiry_date,
+    price: state.price,
+    quantity: state.quantity,
+    description: state.description,
+    batch_no: state.batch_no,
+    mfg_date: state.mfg_date,
+  };
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
   const [formData, setFormData] = useState<MedicineFormData>(initialFormData);
-  const location = useLocation();
-  const { state } = location;
   console.log(state);
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -57,15 +58,15 @@ export default function MedicineDetails() {
     }));
   };
 
-  const clearForm = () => {
-    setFormData(initialFormData);
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     console.log("Form submitted:", formData);
-    // Add your form submission logic here
-    clearForm();
+    const res: any = await api.post("/paramedic/add-medicine", formData);
+    res.data.success
+      ? toast.success(res.data.message)
+      : toast.error(res.data.message);
+
+    navigate("/app/paramedic/inventory");
   };
 
   return (
@@ -171,6 +172,7 @@ export default function MedicineDetails() {
                       id="name"
                       name="name"
                       required
+                      disabled={true}
                       value={formData.name}
                       onChange={handleChange}
                     />
@@ -182,6 +184,7 @@ export default function MedicineDetails() {
                       id="batch_no"
                       name="batch_no"
                       required
+                      disabled={true}
                       value={formData.batch_no}
                       onChange={handleChange}
                     />
@@ -204,9 +207,9 @@ export default function MedicineDetails() {
                     <Input
                       id="expiry_date"
                       name="expiry_date"
-                      type="date"
                       required
-                      value={formData.expiry_date}
+                      disabled={true}
+                      value={moment(formData.expiry_date).format("DD-MM-YYYY")}
                       onChange={handleChange}
                     />
                   </div>
@@ -219,18 +222,19 @@ export default function MedicineDetails() {
                       id="company"
                       name="company"
                       required
+                      disabled={true}
                       value={formData.company}
                       onChange={handleChange}
                     />
                   </div>
 
                   <div>
-                    <Label htmlFor="desciption">Desciption</Label>
+                    <Label htmlFor="description">Description</Label>
                     <Input
-                      id="desciption"
-                      name="desciption"
+                      id="description"
+                      name="description"
                       required
-                      value={formData.desciption}
+                      value={formData.description}
                       onChange={handleChange}
                     />
                   </div>
@@ -252,9 +256,9 @@ export default function MedicineDetails() {
                     <Input
                       id="mfg_date"
                       name="mfg_date"
-                      type="date"
                       required
-                      value={formData.mfg_date}
+                      disabled={true}
+                      value={moment(formData.mfg_date).format("DD-MM-YYYY")}
                       onChange={handleChange}
                     />
                   </div>
