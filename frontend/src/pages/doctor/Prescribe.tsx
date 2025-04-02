@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -89,6 +89,7 @@ const prescriptionFields = [
 
 type Medicine = {
   m_id: string;
+  name: string;
   frequency: string;
   duration: string;
   instructions: string;
@@ -151,7 +152,15 @@ export default function Prescribe() {
       prognosis: "",
       advice: "",
     },
-    medicine: [],
+    medicine: [
+      {
+        m_id: "",
+        name: "",
+        frequency: "",
+        duration: "",
+        instructions: "",
+      },
+    ],
     referred_outside: false,
     rest_recommendation: "",
     follow_up_date: "",
@@ -218,39 +227,6 @@ export default function Prescribe() {
         [name]: value,
       }));
     }
-  }
-
-  function handleMedicineChange(
-    e: ChangeEvent<HTMLInputElement>,
-    index: number,
-  ) {
-    const { name, value } = e.target;
-    setInputValue((prevState) => {
-      const updatedMedicines = [...prevState.medicine];
-      updatedMedicines[index] = {
-        ...updatedMedicines[index],
-        [name]: value,
-      };
-      return { ...prevState, medicine: updatedMedicines };
-    });
-  }
-
-  const addMedicineButton = (event: React.MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault();
-    setInputValue((prevState) => ({
-      ...prevState,
-      medicine: [
-        ...prevState.medicine,
-        { m_id: "", frequency: "", duration: "", instructions: "" },
-      ],
-    }));
-  };
-
-  function removeMedicineButton(index: number) {
-    setInputValue((prevState) => ({
-      ...prevState,
-      medicine: prevState.medicine.filter((_, i) => i !== index),
-    }));
   }
 
   return (
@@ -411,19 +387,14 @@ export default function Prescribe() {
                       <TableRow key={index}>
                         <TableCell>{index + 1}.</TableCell>
                         <TableCell>
-                          <Input
-                            placeholder="Enter medicine"
-                            name="m_id"
-                            value={med.m_id || ""}
-                            onChange={(e) => handleMedicineChange(e, index)}
-                          />
+                          <Input placeholder="Enter medicine" />
                         </TableCell>
+
                         <TableCell>
                           <Input
                             placeholder="Enter frequency"
                             name="frequency"
                             value={med.frequency || ""}
-                            onChange={(e) => handleMedicineChange(e, index)}
                           />
                         </TableCell>
                         <TableCell>
@@ -431,7 +402,6 @@ export default function Prescribe() {
                             placeholder="Enter duration"
                             name="duration"
                             value={med.duration || ""}
-                            onChange={(e) => handleMedicineChange(e, index)}
                           />
                         </TableCell>
                         <TableCell>
@@ -439,11 +409,13 @@ export default function Prescribe() {
                             placeholder="Enter instructions"
                             name="instructions"
                             value={med.instructions || ""}
-                            onChange={(e) => handleMedicineChange(e, index)}
                           />
                         </TableCell>
                         <TableCell>
-                          <button onClick={() => removeMedicineButton(index)}>
+                          <button
+                            type="button"
+                            className="text-red-500 hover:underline"
+                          >
                             Remove
                           </button>
                         </TableCell>
@@ -454,7 +426,7 @@ export default function Prescribe() {
                       <TableCell colSpan={6}>
                         <div className="w-full h-full flex justify-center items-center">
                           <button
-                            onClick={addMedicineButton}
+                            type="button"
                             className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-md shadow-md transition-all duration-300 "
                           >
                             Add Medicine

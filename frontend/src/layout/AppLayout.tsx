@@ -13,7 +13,7 @@ function AppLayout() {
   useEffect(() => {
     if (user.role) toast.success(`Welcome ${user.name}`);
     let time: NodeJS.Timeout;
-    if (user.role === "admin") navigate("/app/admin");
+    if (user.role === "admin") navigate("/app/admin/dailydetails");
     else if (user.role === "receptionist")
       navigate("/app/receptionist/dashboard");
     else if (user.role === "paramedic") navigate("/app/paramedic/dashboard");
