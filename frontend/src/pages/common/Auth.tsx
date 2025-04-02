@@ -1,12 +1,8 @@
-"use client";
-
-import { useState } from "react";
-import { Input } from "@/components/ui/input";
 import Button from "@/components/Button";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
-import { useContext } from "react";
+import { Input } from "@/components/ui/input";
 import { userContext } from "@/store/userContext";
+import { useContext, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import { api } from "../../lib/utils";
 
@@ -26,7 +22,7 @@ export function Auth() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await api.post(`/user/login`, formData);
+      const response: any = await api.post(`/user/login`, formData);
       console.log("Success:", response.data);
 
       const { role } = response.data;
@@ -37,8 +33,8 @@ export function Auth() {
       } else {
         navigate("/");
       }
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
+    } catch (error: any) {
+      if (error) {
         const { response } = error;
         if (response) {
           console.log("Error Status:", response.status);

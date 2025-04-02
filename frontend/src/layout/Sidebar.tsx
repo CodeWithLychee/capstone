@@ -1,19 +1,18 @@
 import {
-  LayoutDashboard,
-  Stethoscope,
   ClipboardList,
-  Trash2,
   Coffee,
   GraduationCap,
+  LayoutDashboard,
   LogOut,
+  Stethoscope,
+  Trash2,
 } from "lucide-react";
 import { LuNotebookPen } from "react-icons/lu";
-import { MdOutlineInventory, MdEventAvailable } from "react-icons/md";
+import { MdOutlineInventory } from "react-icons/md";
 
-import { useContext } from "react";
 import { userContext } from "@/store/userContext";
-import { Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { useContext } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { api } from "../lib/utils";
 
 const links = [
@@ -71,14 +70,9 @@ const links = [
         logo: <ClipboardList className="mr-3 h-5 w-5" />,
       },
       {
-        name: "Available",
-        href: "/app/paramedic/dashboard",
-        logo: <MdEventAvailable className="mr-3 h-5 w-5" />,
-      },
-      {
-        name: "Rest",
-        href: "/app/paramedic/dashboard",
-        logo: <Coffee className="mr-3 h-5 w-5" />,
+        name: "Add Medicine",
+        href: "/app/paramedic/add-medicine",
+        logo: <ClipboardList className="mr-3 h-5 w-5" />,
       },
       {
         name: "Training",

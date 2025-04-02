@@ -4,11 +4,14 @@ import Home from "./pages/common/Home";
 import { Auth } from "./pages/common/Auth";
 import OpdLog from "./pages/paramedics/opdLog.tsx";
 import Prescribe from "./pages/doctor/Prescribe";
-import { InventoryForm } from "./pages/paramedics/Inventory.tsx";
+import { AddMedicine } from "./pages/paramedics/AddMedicine.tsx";
 import Admin from "./pages/admin/Admin.tsx";
 import AddAccount from "./pages/admin/AddAccount.tsx";
 import Opd from "./pages/receptionist/Opd.tsx";
 import Dashboard from "./pages/common/Dashboard.tsx";
+import Inventory from "./pages/paramedics/Inventory.tsx";
+import DispatchMedicine from "./pages/paramedics/DispatchMedicine.tsx";
+import MedicineInfo from "./pages/paramedics/MedicineInfo.tsx";
 
 const App = () => {
   const router = createBrowserRouter([
@@ -37,15 +40,14 @@ const App = () => {
           children: [
             { path: "dashboard", element: <Dashboard /> },
             { path: "opd", element: <Opd /> },
-            { path: "opdLog", element: <OpdLog /> },
+            { path: "opdLog", element: <OpdLog status="false" /> },
           ],
         },
         {
           path: "doctor",
           children: [
             { path: "dashboard", element: <Dashboard /> },
-
-            { path: "patientqueue", element: <OpdLog /> },
+            { path: "patientqueue", element: <OpdLog status="false" /> },
             { path: "prescribe", element: <Prescribe /> },
           ],
         },
@@ -53,8 +55,11 @@ const App = () => {
           path: "paramedic",
           children: [
             { path: "dashboard", element: <Dashboard /> },
-            { path: "inventory", element: <InventoryForm /> },
-            { path: "opdLog", element: <OpdLog /> },
+            { path: "opdLog", element: <OpdLog status="true" /> },
+            { path: "dispatch-medicine", element: <DispatchMedicine /> },
+            { path: "inventory", element: <Inventory /> },
+            { path: "medicine-info", element: <MedicineInfo /> },
+            { path: "add-medicine", element: <AddMedicine /> },
           ],
         },
       ],
