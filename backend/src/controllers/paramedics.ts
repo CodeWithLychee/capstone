@@ -1,5 +1,12 @@
 import { Request, Response } from "express";
 import MedicineModel from "../models/medicine.js";
+import QueueModel from "../models/patientQueue.js";
+
+const fetchInventory = async (req: Request, res: Response) => {
+  const medicines = await MedicineModel.find({});
+
+  res.status(200).json(medicines);
+};
 
 const addOrUpdateMedicine = async (req: Request, res: Response) => {
   const {
@@ -52,15 +59,24 @@ const addOrUpdateMedicine = async (req: Request, res: Response) => {
 };
 
 const dispatchMedicine = async (req: Request, res: Response) => {
+  const { prescription_id, medicines } = req.body;
+
+  await Promise.all(
+    medicines
+      .filter((med: any) => med.available)
+      .map(async (med: any) => {
+        await MedicineModel.updateOne(
+          { _id: med.medicine_id },
+          { $inc: { quantity: -med.duration } }
+        );
+      })
+  );
+
+  await QueueModel.findOneAndDelete({ prescription_id });
+
   res.status(200).json({
-    message: "Medicine dispatched successfully",
+    message: "Medicine dispensed successfully",
   });
-};
-
-const fetchInventory = async (req: Request, res: Response) => {
-  const medicines = await MedicineModel.find({});
-
-  res.status(200).json(medicines);
 };
 
 export { addOrUpdateMedicine, dispatchMedicine, fetchInventory };

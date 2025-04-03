@@ -53,7 +53,7 @@ export default function Profile({ children }: { children: React.ReactNode }) {
         withCredentials: true,
       });
       const data = response.data;
-      console.log(data);
+
       dispatch(data);
     };
     fetchUser();
