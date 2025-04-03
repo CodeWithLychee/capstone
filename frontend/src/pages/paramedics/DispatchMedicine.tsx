@@ -1,13 +1,15 @@
 import { Button } from "@/components/myprofilecomponents/ui/button";
+import { api } from "@/lib/utils";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import { ArrowLeft, Check, Printer } from "lucide-react";
 import moment from "moment";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
-interface MedicineTypes {
-  _id: string;
+interface StateMedicineTypes {
+  medicine_id: string;
   medicine_name: string;
   duration: number;
   frequency: number;
@@ -18,7 +20,6 @@ export default function PrescriptionDetail() {
   const navigate = useNavigate();
   const location = useLocation();
   const { state } = location;
-  console.log("State from location:", state);
 
   const patient = {
     name: state.patient_id.name,
@@ -43,6 +44,57 @@ export default function PrescriptionDetail() {
     const imgHeight = (canvas.height * imgWidth) / canvas.width;
     pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
     pdf.save(`${patient.prescriptionDate}_${patient.name}.pdf`);
+  };
+
+  const [stock, setstock] = useState([]);
+
+  useEffect(() => {
+    const medIds = state.prescription_id.medicine.map(
+      (med: StateMedicineTypes) => med.medicine_id,
+    );
+
+    const fetchStockData = async () => {
+      try {
+        const response = await api.get("/paramedic/inventory");
+        const data: any = response.data;
+
+        const filteredDBStock = data.filter((item: any) =>
+          medIds.includes(item._id),
+        );
+
+        const stock = state.prescription_id.medicine.map(
+          (med: StateMedicineTypes) => {
+            const stockItem = filteredDBStock.find(
+              (item: any) => item._id === med.medicine_id,
+            );
+            return {
+              ...med,
+              available: stockItem.quantity - med.duration >= 0,
+            };
+          },
+        );
+        console.log("Filtered stock data:", stock);
+        setstock(stock);
+      } catch (error) {
+        console.error("Error fetching stock data:", error);
+      }
+    };
+
+    fetchStockData();
+  }, []);
+
+  const handleDispense = async () => {
+    try {
+      const res: any = await api.post("/paramedic/dispatch-medicine", {
+        prescription_id: state.prescription_id._id,
+        medicines: stock,
+      });
+
+      toast.success(res.data.message);
+      navigate("/app/paramedic/opdLog");
+    } catch (error) {
+      console.error("Error dispensing medication:", error);
+    }
   };
 
   return (
@@ -110,21 +162,24 @@ export default function PrescriptionDetail() {
           </h2>
 
           <div className="space-y-4 mb-6">
-            {patient.medicines.map((med: MedicineTypes) => (
-              <div key={med._id} className="bg-gray-50 p-4 rounded-lg border">
+            {stock.map((med: any) => (
+              <div
+                key={med.medicine_id}
+                className="bg-gray-50 p-4 rounded-lg border"
+              >
                 <div className="flex items-center gap-3">
                   <div className="flex-1">
                     <div className="flex justify-between">
                       <h1 className="font-medium">{med.medicine_name}</h1>
-                      {/* <span
+                      <span
                         className={`px-2 py-1 rounded-full text-xs ${
-                          med.available
+                          med.available > 0
                             ? "bg-green-100 text-green-800"
                             : "bg-red-100 text-red-800"
                         }`}
                       >
                         {med.available ? "In Stock" : "Out of Stock"}
-                      </span> */}
+                      </span>
                     </div>
                     <div className="text-sm text-gray-600 mt-1">
                       <p>Quantity: {med.duration} units</p>
@@ -159,7 +214,10 @@ export default function PrescriptionDetail() {
           >
             Cancel
           </Button>
-          <Button className="bg-[#1e3a5c] hover:bg-[#2a4a6d] text-white">
+          <Button
+            onClick={handleDispense}
+            className="bg-[#1e3a5c] hover:bg-[#2a4a6d] text-white"
+          >
             <Check className="w-4 h-4 mr-2" />
             Dispense Medication
           </Button>
