@@ -6,6 +6,14 @@ import moment from "moment";
 import { useRef } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
+interface MedicineTypes {
+  _id: string;
+  medicine_name: string;
+  duration: number;
+  frequency: number;
+  instructions: string;
+}
+
 export default function PrescriptionDetail() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -20,40 +28,8 @@ export default function PrescriptionDetail() {
     prescribedBy: state.prescription_id.doctor_id,
     prescriptionDate: moment(state.prescription_id.date).format("DD-MM-YYYY"),
     notes: state.prescription_id.paramedic_notes,
+    medicines: state.prescription_id.medicine,
   };
-
-  const medications = [
-    {
-      id: 1,
-      name: "Paracetamol 500mg",
-      dosage: "1 tablet",
-      frequency: "3 times a day after meals",
-      duration: "5 days",
-      quantity: 15,
-      notes: "For fever and pain relief",
-      available: true,
-    },
-    {
-      id: 2,
-      name: "Azithromycin 250mg",
-      dosage: "1 tablet",
-      frequency: "Once daily",
-      duration: "3 days",
-      quantity: 3,
-      notes: "Take on empty stomach",
-      available: true,
-    },
-    {
-      id: 3,
-      name: "Vitamin C 500mg",
-      dosage: "1 tablet",
-      frequency: "Once daily",
-      duration: "15 days",
-      quantity: 15,
-      notes: "",
-      available: false,
-    },
-  ];
 
   const pdfRef = useRef(null);
 
@@ -134,18 +110,13 @@ export default function PrescriptionDetail() {
           </h2>
 
           <div className="space-y-4 mb-6">
-            {medications.map((med) => (
-              <div key={med.id} className="bg-gray-50 p-4 rounded-lg border">
+            {patient.medicines.map((med: MedicineTypes) => (
+              <div key={med._id} className="bg-gray-50 p-4 rounded-lg border">
                 <div className="flex items-center gap-3">
                   <div className="flex-1">
                     <div className="flex justify-between">
-                      <label
-                        htmlFor={`med-${med.id}`}
-                        className="font-medium cursor-pointer"
-                      >
-                        {med.name}
-                      </label>
-                      <span
+                      <h1 className="font-medium">{med.medicine_name}</h1>
+                      {/* <span
                         className={`px-2 py-1 rounded-full text-xs ${
                           med.available
                             ? "bg-green-100 text-green-800"
@@ -153,17 +124,16 @@ export default function PrescriptionDetail() {
                         }`}
                       >
                         {med.available ? "In Stock" : "Out of Stock"}
-                      </span>
+                      </span> */}
                     </div>
                     <div className="text-sm text-gray-600 mt-1">
-                      <p>Quantity: {med.quantity} units</p>
-                      <p>
-                        Dosage: {med.dosage}, {med.frequency}, for{" "}
-                        {med.duration}
-                      </p>
+                      <p>Quantity: {med.duration} units</p>
+                      <p>Frequency: {med.frequency}</p>
 
-                      {med.notes && (
-                        <p className="text-gray-500 mt-1">Note: {med.notes}</p>
+                      {med.instructions && (
+                        <p className="text-gray-500 mt-1">
+                          Note: {med.instructions}
+                        </p>
                       )}
                     </div>
                   </div>
