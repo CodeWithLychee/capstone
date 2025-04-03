@@ -173,8 +173,9 @@ export default function Prescribe() {
   async function submitPrescriptionForm(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     console.log("After Final Input Values : ", inputValue);
+
     try {
-      const response = await api.post("/doctor/prescription", {
+      const response: any = await api.post("/doctor/prescription", {
         prescription_id: prescription._id,
         doctor_id: "67d6a54f84ae5b5080fd855a",
         paramedic_notes: inputValue.paramedic_notes,
@@ -272,8 +273,11 @@ export default function Prescribe() {
     }
 
     try {
-      const { data } = await api.post("/doctor/search", { query });
-      setSearchResults((prev) => ({ ...prev, [index]: data.medicines })); // Store per input field
+      const response: any = await api.post("/doctor/search", { query });
+      setSearchResults((prev) => ({
+        ...prev,
+        [index]: response.data.medicines,
+      })); // Store per input field
     } catch (error) {
       console.error("Error searching medicine:", error);
     }
@@ -447,6 +451,7 @@ export default function Prescribe() {
                           <input
                             type="text"
                             value={med.name}
+                            required
                             onChange={(e) =>
                               handleSearch(index, e.target.value)
                             }
@@ -476,6 +481,7 @@ export default function Prescribe() {
                           <input
                             type="text"
                             value={med.frequency}
+                            required
                             onChange={(e) =>
                               handleMedicineChange(
                                 index,
@@ -491,6 +497,7 @@ export default function Prescribe() {
                           <input
                             type="text"
                             value={med.duration}
+                            required
                             onChange={(e) =>
                               handleMedicineChange(
                                 index,
@@ -505,6 +512,7 @@ export default function Prescribe() {
                         <td className="border p-2">
                           <input
                             type="text"
+                            required
                             value={med.instructions}
                             onChange={(e) =>
                               handleMedicineChange(
