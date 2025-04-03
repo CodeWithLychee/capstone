@@ -13,6 +13,7 @@ import { api } from "../../lib/utils.ts";
 import { toast, ToastContainer } from "react-toastify";
 import { ChangeEvent } from "react";
 import { userInterface, opdPageInterface } from "@/lib/types.ts";
+import { useNavigate } from "react-router-dom";
 
 const fields = [
   {
@@ -85,7 +86,7 @@ function Opd() {
     pregnant: false,
     prescription: [],
   });
-
+  const navigate = useNavigate();
   const [data, setData] = useState<userInterface[]>([]);
   async function handle(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -94,6 +95,8 @@ function Opd() {
     const response = await api.post("/user/addOpd", formData);
     if (response.status == 200) toast.success(response.data.message);
     else toast.error(response.data.message);
+
+    navigate("/app/receptionist/opdLog");
   }
   async function search(e: ChangeEvent<HTMLInputElement>) {
     e.preventDefault();

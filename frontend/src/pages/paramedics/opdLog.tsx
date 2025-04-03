@@ -38,9 +38,7 @@ export default function OpdLog({ status }: Props) {
   return (
     <Access text={["doctor", "receptionist", "paramedic"]}>
       <div className="p-6 bg-zinc-100 h-full">
-        <h1 className="text-4xl font-semibold mb-6 pl-5">
-          Patient Prescription
-        </h1>
+        <h1 className="text-4xl font-semibold mb-6 pl-5">Patient Queue</h1>
         <div className="bg-white rounded-lg shadow">
           <div className="overflow-x-auto">
             <table className="w-full">
@@ -88,7 +86,7 @@ export default function OpdLog({ status }: Props) {
                     <td className="px-6 py-4 text-sm text-gray-900">
                       {patient.prescription_id.doctor_id}
                     </td>
-                    {user.role == "paramedic" ? (
+                    {user.role == "paramedic" && (
                       <td className="px-6 py-4 text-sm">
                         <Button
                           onClick={() =>
@@ -100,7 +98,8 @@ export default function OpdLog({ status }: Props) {
                           View
                         </Button>
                       </td>
-                    ) : (
+                    )}
+                    {user.role == "doctor" && (
                       <td className="px-6 py-4 text-sm">
                         <Button
                           onClick={() =>

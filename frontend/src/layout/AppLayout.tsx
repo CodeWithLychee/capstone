@@ -26,7 +26,7 @@ function AppLayout() {
     <>
       {user.role && (
         <div className="flex">
-          <ToastContainer />
+          <ToastContainer stacked autoClose={2000} />
           <Sidebar />
           <div className="fixed right-0 top-0 w-[85%]">
             <Topbar />
