@@ -24,6 +24,7 @@ import { prescriptionContext } from "@/store/prescriptionContext";
 import { dataPass } from "@/lib/types.ts";
 import { api } from "@/lib/utils";
 import { useNavigate } from "react-router-dom";
+import { userContext } from "@/store/userContext";
 
 const vitals: Array<{
   id: string;
@@ -130,7 +131,7 @@ export default function Prescribe() {
     useState(false);
 
   const { prescription } = useContext(prescriptionContext);
-
+  const { user } = useContext(userContext);
   const [inputValue, setInputValue] = useState<InputValue>({
     paramedic_notes: "",
     vitals: {
@@ -177,7 +178,7 @@ export default function Prescribe() {
     try {
       const response: any = await api.post("/doctor/prescription", {
         prescription_id: prescription._id,
-        doctor_id: "67d6a54f84ae5b5080fd855a",
+        doctor_id: user.name,
         paramedic_notes: inputValue.paramedic_notes,
         vitals: inputValue.vitals,
         treatment_plan: inputValue.treatment_plan,
@@ -258,7 +259,7 @@ export default function Prescribe() {
   };
 
   const [searchResults, setSearchResults] = useState<
-    Record<number, { name: string; _id: string }[]>
+    Record<number, { name: string; _id: string; quantity: number }[]>
   >({});
 
   const [_searchQuery, setSearchQuery] = useState("");
@@ -468,7 +469,9 @@ export default function Prescribe() {
                                     onClick={() =>
                                       handleSelectMedicine(index, medicine)
                                     }
-                                    className="p-2 cursor-pointer hover:bg-gray-200"
+                                    className={`p-2 cursor-pointer hover:bg-gray-200 ${
+                                      medicine.quantity == 0 && " text-red-600"
+                                    }`}
                                   >
                                     {medicine.name}
                                   </li>
