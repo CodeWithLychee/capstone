@@ -95,8 +95,10 @@ export const searchMedicine = async (req: Request, res: Response) => {
     const { query } = req.body;
 
     const medicines = await medicine
-      .find({ name: { $regex: `^${query}`, $options: "i" } })
-      .select("name _id");
+      .find({
+        name: { $regex: `^${query}`, $options: "i" },
+      })
+      .select("name _id quantity");
 
     res.status(200).json({ success: true, medicines });
   } catch (error) {
