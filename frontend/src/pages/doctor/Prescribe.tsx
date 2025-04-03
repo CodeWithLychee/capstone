@@ -188,9 +188,9 @@ export default function Prescribe() {
       console.log("API Response: ", response);
       toast.success(response.data.message);
 
-      setTimeout(() => {
-        navigate("/app/doctor/patientqueue");
-      }, 6000);
+      navigate("/app/doctor/patientqueue", {
+        state: { prescription_id: prescription._id },
+      });
     } catch (error) {
       toast.error("Error while saving prescription details.");
       console.error(error);

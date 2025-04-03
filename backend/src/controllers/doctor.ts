@@ -75,7 +75,7 @@ export const createPrescription = async (_req: Request, res: Response) => {
 
     res.status(201).json({
       success: true,
-      message: "Prescription saved successfully and status set true.",
+      message: "Prescription saved successfully.",
     });
   } catch (error: any) {
     console.error("Error saving prescription:", error);
