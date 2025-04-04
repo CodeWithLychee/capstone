@@ -22,7 +22,7 @@ export interface userInterface {
 
 export interface prescriptionInterface {
   patient_id: Schema.Types.ObjectId;
-  doctor_id: Schema.Types.ObjectId;
+  doctor_id?: String;
   paramedic_notes?: string;
   vitals: vitalsInterface;
   prescription: {
