@@ -8,7 +8,7 @@ const schema = new Schema(
       ref: "User",
       required: false,
     },
-    doctor_id: { type: Schema.Types.ObjectId, ref: "User", required: false },
+    doctor_id: { type: String },
     paramedic_notes: { type: String },
     vitals: {
       bp: { type: String },

@@ -178,7 +178,7 @@ export default function Prescribe() {
     try {
       const response: any = await api.post("/doctor/prescription", {
         prescription_id: prescription._id,
-        doctor_id: user.name,
+        doctor_id: `Dr. ${user.name}`,
         paramedic_notes: inputValue.paramedic_notes,
         vitals: inputValue.vitals,
         treatment_plan: inputValue.treatment_plan,
